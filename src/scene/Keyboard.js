@@ -217,13 +217,13 @@ function Case() {
   return (
     <group>
       <mesh geometry={base} position={[0, -0.25, 0]}>
-        <meshStandardMaterial color="#353a3f" metalness={0.45} roughness={0.42} envMapIntensity={1.3} />
+        <meshStandardMaterial color="#0a0a0c" metalness={0.55} roughness={0.38} envMapIntensity={0.7} />
       </mesh>
       <mesh geometry={rim} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]}>
-        <meshStandardMaterial color="#454b51" metalness={0.5} roughness={0.32} envMapIntensity={1.4} />
+        <meshStandardMaterial color="#141519" metalness={0.6} roughness={0.28} envMapIntensity={0.9} />
       </mesh>
       <mesh geometry={plate} position={[0, 0, 0]}>
-        <meshStandardMaterial color="#121417" roughness={0.75} />
+        <meshStandardMaterial color="#040405" roughness={0.8} />
       </mesh>
     </group>
   );

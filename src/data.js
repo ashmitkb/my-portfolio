@@ -229,6 +229,6 @@ export const marqueeWords = ['Web', 'AI', 'IoT', 'Data', 'Motion', 'Research'];
 
 export const socials = [
   { label: 'GitHub', href: 'https://github.com/ashmitkb' },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/ashmit-bhandary-aba060307/' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/ashmit-bhandary/' },
   { label: 'X', href: 'https://twitter.com/ashmitkb' },
 ];
