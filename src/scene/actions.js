@@ -32,12 +32,7 @@ export function runAction(key) {
       go('#work');
       break;
     case 'resume':
-      if (profile.resume) {
-        window.open(profile.resume, '_blank', 'noopener');
-      } else {
-        toast('Résumé coming soon — email me and I’ll send it over ✉');
-        go('#contact');
-      }
+      go('#experience');
       break;
     case 'figma':
       if (profile.figma) window.open(profile.figma, '_blank', 'noopener');

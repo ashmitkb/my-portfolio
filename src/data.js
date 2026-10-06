@@ -13,8 +13,7 @@ export const profile = {
   location: 'Bengaluru, India',
   timeZone: 'Asia/Kolkata',
   photo: meImg,
-  // Set these to URLs to make the Résumé and Figma keys open them directly.
-  resume: null,
+  // Set to a URL to make the Figma key open it directly.
   figma: null,
   // Cursor style: 'droplet', 'ring' or 'invert'. Try them live with ?cursor=ring etc.
   cursor: 'droplet',

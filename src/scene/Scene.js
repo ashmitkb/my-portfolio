@@ -114,7 +114,7 @@ export default function Scene() {
         <Lightformer form="rect" intensity={2} position={[0, -5, 2]} rotation-x={Math.PI / 2} scale={[12, 6, 1]} color="#ffffff" />
       </Environment>
       <Rig reduced={reduced} mobile={mobile} />
-      <Floaters count={mobile ? 6 : 12} still={reduced} />
+      <Floaters count={mobile ? 6 : 12} still={reduced} mobile={mobile} />
     </Canvas>
   );
 }

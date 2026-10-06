@@ -13,6 +13,7 @@ export default function Nav() {
   const time = useClock(profile.timeZone);
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   // hide on scroll down, reveal on scroll up
   useEffect(() => {
@@ -20,6 +21,7 @@ export default function Nav() {
     const onScroll = () => {
       const y = window.scrollY;
       setHidden(y > last && y > 160 && !open);
+      setScrolled(y > 40);
       last = y;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -34,7 +36,7 @@ export default function Nav() {
   }, [open]);
 
   return (
-    <header className={`nav ${hidden ? 'is-hidden' : ''} ${open ? 'is-open' : ''}`}>
+    <header className={`nav ${hidden ? 'is-hidden' : ''} ${open ? 'is-open' : ''} ${scrolled ? 'is-scrolled' : ''}`}>
       <a href="#top" className="nav__logo" data-cursor="hover" aria-label="Back to top">
         {profile.name}
         <sup>©</sup>

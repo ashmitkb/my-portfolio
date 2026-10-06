@@ -12,7 +12,7 @@ const rng = (seed) => () => {
 
 const shapes = ['icosa', 'torus', 'sphere', 'octa', 'knot'];
 
-export default function Floaters({ count = 12, still = false }) {
+export default function Floaters({ count = 12, still = false, mobile = false }) {
   const refs = useRef([]);
   const spin = useRef({ boost: 0, angle: 0 });
 
@@ -24,17 +24,23 @@ export default function Floaters({ count = 12, still = false }) {
   }, []);
   const items = useMemo(() => {
     const r = rng(42);
-    return Array.from({ length: count }, (_, i) => ({
-      shape: shapes[i % shapes.length],
-      x: (r() - 0.5) * 15,
-      y: r() * RANGE,
-      z: -2 - r() * 6,
-      s: 0.35 + r() * 0.65,
-      speed: 0.0016 + r() * 0.0026,
-      spin: (r() - 0.5) * 0.6,
-      tint: ['#ffb3a3', '#9fc8ff', '#c9b8ff', '#9fe6d6'][i % 4],
-    }));
-  }, [count]);
+    return Array.from({ length: count }, (_, i) => {
+      const x = (r() - 0.5) * 15;
+      const y = r() * RANGE;
+      const z = -2 - r() * 6;
+      return {
+        shape: shapes[i % shapes.length],
+        // on narrow screens keep the shapes at the edges, behind the copy
+        x: mobile ? Math.sign(x || 1) * (3.3 + (Math.abs(x) / 7.5) * 1.4) : x,
+        y,
+        z: mobile ? z - 2 : z,
+        s: 0.35 + r() * 0.65,
+        speed: 0.0016 + r() * 0.0026,
+        spin: (r() - 0.5) * 0.6,
+        tint: ['#ffb3a3', '#9fc8ff', '#c9b8ff', '#9fe6d6'][i % 4],
+      };
+    });
+  }, [count, mobile]);
 
   useFrame((state, dt) => {
     const t = still ? 0 : state.clock.elapsedTime;
