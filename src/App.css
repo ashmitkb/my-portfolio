@@ -14,6 +14,18 @@ em {
   color: var(--muted);
   margin-bottom: 2.5rem;
 }
+:root[data-theme='light'] .eyebrow {
+  color: var(--fg-3);
+}
+/* small labels that sit straight on the page get a halo in the page colour,
+   so they stay readable when a 3D shape drifts behind them */
+.eyebrow,
+.nav__logo,
+.nav__meta,
+.contact__foot,
+.other__title {
+  text-shadow: 0 0 2px var(--bg), 0 0 12px var(--bg);
+}
 .section {
   position: relative;
   z-index: 2;
@@ -100,6 +112,7 @@ em {
 .glass {
   border-radius: 32px;
   overflow: hidden;
+  isolation: isolate;
   /* darker smoked tint keeps text legible over bright 3D shapes behind */
   background:
     var(--glass-panel),
@@ -109,6 +122,7 @@ em {
   content: '';
   position: absolute;
   inset: 0;
+  z-index: -1; /* under the text, over the glass fill */
   pointer-events: none;
   background: radial-gradient(
     380px circle at var(--mx, 25%) var(--my, 0%),
@@ -397,6 +411,15 @@ em {
 }
 .nav.is-hidden {
   transform: translateY(-110%);
+}
+/* below ~1120px the links + theme switch need the room the clock used */
+@media (max-width: 1120px) {
+  .nav {
+    grid-template-columns: 1fr auto;
+  }
+  .nav__meta {
+    display: none;
+  }
 }
 /* soft fade behind the bar once scrolled, so the logo never sits on copy */
 .nav::before {
@@ -1255,6 +1278,10 @@ em {
   color: var(--muted);
   transition: color 0.4s;
 }
+.acc__btn:focus-visible {
+  outline-offset: -3px;
+  border-radius: 14px;
+}
 .acc__item.is-open .acc__btn,
 .acc__btn:hover {
   color: var(--fg);
@@ -1400,7 +1427,7 @@ em {
   font-weight: 500;
   letter-spacing: 0.02em;
   white-space: nowrap;
-  color: #6f5ee8;
+  color: #4f3cc9;
   background: linear-gradient(180deg, #fbf9fb 0%, #e6e1e8 100%);
   box-shadow:
     inset 0 1px 0 #ffffff,
@@ -1422,9 +1449,9 @@ em {
     0 6px 14px rgba(0, 0, 0, 0.4);
 }
 .keycap--accent {
-  --side: #3324b8;
-  color: #eeebff;
-  background: linear-gradient(180deg, #7f70ff 0%, #5543ff 100%);
+  --side: #2d1fae;
+  color: #ffffff;
+  background: linear-gradient(180deg, #6b5bff 0%, #4d3bf2 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.45),
     inset 0 -3px 8px rgba(30, 10, 120, 0.35),
@@ -1584,6 +1611,7 @@ em {
   }
   .about__text {
     font-size: 1.45rem;
+    text-shadow: 0 0 2px var(--bg), 0 0 14px var(--bg);
   }
   .stat {
     padding: 14px 16px;
@@ -1613,6 +1641,12 @@ em {
   .about__cols > *,
   .xp__side > * {
     scroll-snap-align: start;
+  }
+  /* room for the cards' drop shadow inside the scroller, without extra gap */
+  .about__cols,
+  .xp__side {
+    padding-bottom: 64px;
+    margin-bottom: -58px;
   }
   .xp {
     gap: 28px;

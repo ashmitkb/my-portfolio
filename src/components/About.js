@@ -148,7 +148,7 @@ export default function About() {
         </dl>
       </div>
 
-      <div ref={rowRef} className={`about__cols reveal ${rowSeen ? 'is-in' : ''}`}>
+      <div id="about-end" ref={rowRef} className={`about__cols reveal ${rowSeen ? 'is-in' : ''}`}>
         <div className="glass panel">
           <h3 className="mono panel__title">Right now</h3>
           <ul className="now">

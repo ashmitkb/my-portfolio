@@ -5,7 +5,7 @@
   --fg: #f2efe9;
   --fg-2: #e2dde9; /* body copy */
   --fg-3: #cfcadb; /* small labels */
-  --muted: #8a8780;
+  --muted: #a5a1ad;
   --line: rgba(242, 239, 233, 0.14);
   --accent: #ff8a73;
   --accent-ink: #ff8a73; /* accent used as text */
@@ -19,7 +19,7 @@
   --glass-fill: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04) 60%);
   --glass-fill-hover: linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08));
   --glass-panel: linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.03) 60%);
-  --glass-tint: rgba(14, 12, 22, 0.5);
+  --glass-tint: rgba(14, 12, 22, 0.64);
   --glass-border: rgba(255, 255, 255, 0.16);
   --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(255, 255, 255, 0.06),
     inset 0 0 24px rgba(255, 255, 255, 0.04), 0 24px 60px rgba(0, 0, 0, 0.35);
@@ -53,9 +53,9 @@
   --fg: #16131d;
   --fg-2: #2e2a36;
   --fg-3: #4b4655;
-  --muted: #6b6674;
+  --muted: #58535f;
   --line: rgba(22, 19, 29, 0.12);
-  --accent-ink: #c13e22;
+  --accent-ink: #a9341a;
   --grad-ink: linear-gradient(100deg, #e0532f 0%, #8a52e8 50%, #2a6fd6 100%);
   --blob-a: rgba(120, 175, 255, 0.28);
   --blob-b: rgba(255, 150, 125, 0.24);
@@ -63,7 +63,7 @@
   --glass-fill: linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.5) 60%);
   --glass-fill-hover: linear-gradient(135deg, #ffffff, rgba(255, 255, 255, 0.78));
   --glass-panel: linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.42) 60%);
-  --glass-tint: rgba(255, 255, 255, 0.32);
+  --glass-tint: rgba(255, 255, 255, 0.55);
   --glass-border: rgba(255, 255, 255, 0.75);
   --glass-shadow: inset 0 1px 0 #ffffff, inset 0 -1px 0 rgba(255, 255, 255, 0.6),
     inset 0 0 24px rgba(255, 255, 255, 0.45), 0 0 0 1px rgba(30, 20, 60, 0.06), 0 24px 60px rgba(60, 40, 120, 0.14);
@@ -82,6 +82,14 @@
   --drop-shadow: 0 6px 16px rgba(40, 30, 80, 0.22);
   --keycap-drop: 0 14px 30px rgba(40, 30, 80, 0.22);
   --grain: 0.05;
+}
+
+/* On phones the 3D keyboard parks behind the glass panels, so the dark glass
+   is a little smokier there to keep small labels readable over its glow. */
+@media (max-width: 860px) {
+  :root:not([data-theme='light']) {
+    --glass-tint: rgba(14, 12, 22, 0.74);
+  }
 }
 
 /* theme switch: the new theme is revealed in a circle from the toggle */
@@ -152,7 +160,7 @@ p {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-ink);
   outline-offset: 4px;
 }
 

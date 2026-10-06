@@ -17,6 +17,7 @@ const POSES = [
   { id: 'about', x: 3.6, y: 3.1, z: -4.5, tilt: 0.6, yaw: 0.9, s: 0.5, m: { x: -0.2, y: 1, z: -5, s: 0.75 } },
   // drifts up out of view while the About text is being read
   { id: 'about-body', x: 4.4, y: 7.5, z: -4.5, tilt: 0.6, yaw: 1.2, s: 0.5, m: { x: 0, y: 9, z: -5, s: 0.7 } },
+  { id: 'about-end', x: 4.4, y: 7.5, z: -4.5, tilt: 0.6, yaw: 1.0, s: 0.5, m: { x: 0, y: 9, z: -5, s: 0.7 } },
   { id: 'experience', x: 4.1, y: 2.3, z: -4, tilt: 0.75, yaw: 0.7, s: 0.52, m: { x: 0, y: -0.4, z: -5, s: 0.85 } },
   // and again while the timeline is being read
   { id: 'experience-body', x: 4.4, y: 7.5, z: -4.5, tilt: 0.75, yaw: 0.9, s: 0.5, m: { x: 0, y: 9, z: -5, s: 0.7 } },
