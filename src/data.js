@@ -160,52 +160,60 @@ export const otherWork = [
   },
 ];
 
+// Timeline, newest first. `mono` is the badge monogram, `facts` show as chips.
 export const experience = [
   {
     when: 'Nov 2025 – Mar 2026',
+    type: 'Research',
     role: 'Research Intern',
     org: 'CHRIST (Deemed to be University)',
-    text: 'Faculty seed-money study on how smartphone addiction, academic anxiety and cybersecurity behaviour connect among students. Owned the data pipeline end to end: 382 respondents, reliability checks and binary logistic regression in Python. Findings feed a proposed IT policy addendum on digital wellbeing.',
+    mono: 'C',
+    text: 'A faculty seed-money study on how smartphone addiction, academic anxiety and cybersecurity behaviour connect among students. I owned the data pipeline end to end, and the findings feed a proposed IT policy addendum on digital wellbeing.',
+    facts: ['382 respondents', 'Python', 'Logistic regression'],
   },
   {
     when: 'Mar – Jun 2025',
+    type: 'Internship',
     role: 'Web Development Intern',
     org: '1learnTLS, Bengaluru',
+    mono: '1L',
     text: 'Built the company website from scratch, from design to deployment, and met every deadline independently.',
+    facts: ['Design', 'Development', 'Deployment'],
   },
   {
     when: 'Jan – May 2025',
+    type: 'Exchange',
     role: 'Semester exchange',
     org: 'Edge Hill University, England',
-    text: 'Fourth semester of my BCA, studied in the UK.',
+    mono: 'EH',
+    text: 'Spent the fourth semester of my BCA studying in the UK.',
+    facts: ['United Kingdom', '4th semester'],
   },
   {
     when: '2023 – 2027',
+    type: 'Degree',
     role: 'Bachelor of Computer Applications',
     org: 'CHRIST (Deemed to be University), Bengaluru',
-    text: 'Data analysis, web development and machine learning.',
+    mono: 'C',
+    text: 'Focused on data analysis, web development and machine learning.',
+    facts: ['Data analysis', 'Web development', 'Machine learning'],
   },
 ];
 
-export const extras = [
-  {
-    title: 'Leadership',
-    items: [
-      'Team operations lead, Vizerion Gaming Club, CHRIST (2025–26)',
-      'Captain of the departmental football team, 15 players (2024–25)',
-    ],
-  },
-  {
-    title: 'Awards',
-    items: [
-      '1st place, inter-university tech quiz at Presidency University (Dec 2024)',
-      '1st place, inter-university treasure hunt at Bishop Cotton Academy (Jan 2025)',
-    ],
-  },
-  {
-    title: 'Certifications',
-    items: ['Google Data Analytics (2026)', 'AWS Cloud (2025)', 'E-Business, NPTEL (2025)'],
-  },
+export const awards = [
+  { place: '1st', event: 'Inter-university tech quiz', where: 'Presidency University', when: 'Dec 2024' },
+  { place: '1st', event: 'Inter-university treasure hunt', where: 'Bishop Cotton Academy', when: 'Jan 2025' },
+];
+
+export const leadership = [
+  { role: 'Team operations lead', org: 'Vizerion Gaming Club, CHRIST', when: '2025–26' },
+  { role: 'Captain', org: 'Departmental football team, 15 players', when: '2024–25' },
+];
+
+export const certifications = [
+  { name: 'Google Data Analytics', by: 'Google · Coursera', when: '2026' },
+  { name: 'AWS Cloud', by: 'AWS', when: '2025' },
+  { name: 'E-Business', by: 'NPTEL', when: '2025' },
 ];
 
 export const services = [
