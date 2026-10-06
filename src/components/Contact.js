@@ -28,14 +28,15 @@ export default function Contact() {
 
   return (
     <footer id="contact" className="section contact">
-      <p className="eyebrow mono">(04) Contact</p>
+      <p className="eyebrow mono">(05) Contact</p>
       <h2 ref={ref} className={`contact__title reveal ${seen ? 'is-in' : ''}`}>
         Let’s make something <em>unforgettable</em>
       </h2>
 
       <div className="compose glass" onMouseMove={track}>
         <p className="compose__label mono">
-          <span className="dot" /> Say hello — always open to new projects
+          <span className="hairline" aria-hidden="true" />
+          Say hello — always open to new projects
         </p>
         <a href={`mailto:${profile.email}`} className="compose__email" data-cursor="hover">
           {profile.email}

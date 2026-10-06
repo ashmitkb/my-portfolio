@@ -9,6 +9,7 @@ import Marquee from './components/Marquee';
 import Work from './components/Work';
 import About from './components/About';
 import Services from './components/Services';
+import Experience from './components/Experience';
 import Contact from './components/Contact';
 import SceneLayer from './components/SceneLayer';
 import Lens from './components/Lens';
@@ -36,6 +37,7 @@ function App() {
         <Marquee />
         <Work />
         <About />
+        <Experience />
         <Services />
       </main>
       <Contact />

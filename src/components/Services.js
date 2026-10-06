@@ -9,7 +9,7 @@ export default function Services() {
   return (
     <section id="services" className="section services">
       <div ref={ref} className={`section__head reveal ${seen ? 'is-in' : ''}`}>
-        <p className="eyebrow mono">(03) Capabilities</p>
+        <p className="eyebrow mono">(04) Capabilities</p>
         <h2 className="display">
           What I <em>do</em>
         </h2>

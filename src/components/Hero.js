@@ -17,8 +17,9 @@ export default function Hero({ ready }) {
       </h1>
 
       <div className="hero__ui">
-        <p className="glass-chip mono">
-          <span className="dot" /> Open to work · {profile.role}
+        <p className="hero__eyebrow mono">
+          <span className="hairline" aria-hidden="true" />
+          {profile.tagline}
         </p>
         <p className="hero__intro">{profile.intro}</p>
         <div className="hero__actions">

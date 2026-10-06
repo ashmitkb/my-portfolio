@@ -20,7 +20,7 @@ test('renders hero, sections and contact', () => {
     screen.getByRole('heading', { level: 1, name: /ashmit/i })
   ).toBeInTheDocument();
   expect(screen.getByText(/selected work/i)).toBeInTheDocument();
-  expect(screen.getByText(/apple website replica/i)).toBeInTheDocument();
+  expect(screen.getByText(/green corridor/i, { selector: 'h3' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /ashmitbdry@gmail.com/i })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /copy email/i })).toBeInTheDocument();
 });
