@@ -1,17 +1,94 @@
 :root {
+  color-scheme: dark;
   --bg: #07060c;
   --bg-2: #0d0b14;
   --fg: #f2efe9;
+  --fg-2: #e2dde9; /* body copy */
+  --fg-3: #cfcadb; /* small labels */
   --muted: #8a8780;
   --line: rgba(242, 239, 233, 0.14);
   --accent: #ff8a73;
+  --accent-ink: #ff8a73; /* accent used as text */
   --sky: #8fc4ff;
   --grad: linear-gradient(100deg, #ff9d8a 0%, #c9b8ff 50%, #8fc4ff 100%);
+  --grad-ink: var(--grad); /* gradient used as text */
+  --blob-a: rgba(143, 196, 255, 0.16);
+  --blob-b: rgba(255, 138, 115, 0.13);
+  --blob-c: rgba(201, 184, 255, 0.12);
+  /* liquid glass */
+  --glass-fill: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04) 60%);
+  --glass-fill-hover: linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08));
+  --glass-panel: linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.03) 60%);
+  --glass-tint: rgba(14, 12, 22, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 0 24px rgba(255, 255, 255, 0.04), 0 24px 60px rgba(0, 0, 0, 0.35);
+  --glass-sheen: rgba(255, 255, 255, 0.2);
+  --glass-fallback: rgba(30, 28, 44, 0.85);
+  --chip-bg: rgba(255, 255, 255, 0.06);
+  --chip-bg-strong: rgba(255, 255, 255, 0.12);
+  --chip-border: rgba(255, 255, 255, 0.18);
+  --nav-fade: linear-gradient(to bottom, rgba(7, 6, 12, 0.88), rgba(7, 6, 12, 0.55) 55%, rgba(7, 6, 12, 0));
+  --marquee-bg: rgba(7, 6, 12, 0.35);
+  --hero-fill: linear-gradient(180deg, #fff 25%, rgba(255, 255, 255, 0.12) 100%);
+  --badge-bg: rgba(14, 12, 22, 0.55);
+  --ring: rgba(242, 239, 233, 0.55);
+  --ring-fill: rgba(242, 239, 233, 0.1);
+  --drop-border: rgba(255, 255, 255, 0.45);
+  --drop-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  --keycap-drop: 0 14px 30px rgba(0, 0, 0, 0.45);
+  --grain: 0.06;
   --serif: 'Instrument Serif', 'Times New Roman', serif;
   --sans: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --pad: clamp(20px, 4vw, 56px);
+}
+
+/* Light theme — same design, lights on. The 3D keyboard keeps its colours. */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f3f0eb;
+  --bg-2: #ebe7e1;
+  --fg: #16131d;
+  --fg-2: #2e2a36;
+  --fg-3: #4b4655;
+  --muted: #6b6674;
+  --line: rgba(22, 19, 29, 0.12);
+  --accent-ink: #c13e22;
+  --grad-ink: linear-gradient(100deg, #e0532f 0%, #8a52e8 50%, #2a6fd6 100%);
+  --blob-a: rgba(120, 175, 255, 0.28);
+  --blob-b: rgba(255, 150, 125, 0.24);
+  --blob-c: rgba(190, 165, 255, 0.26);
+  --glass-fill: linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.5) 60%);
+  --glass-fill-hover: linear-gradient(135deg, #ffffff, rgba(255, 255, 255, 0.78));
+  --glass-panel: linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.42) 60%);
+  --glass-tint: rgba(255, 255, 255, 0.32);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --glass-shadow: inset 0 1px 0 #ffffff, inset 0 -1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 24px rgba(255, 255, 255, 0.45), 0 0 0 1px rgba(30, 20, 60, 0.06), 0 24px 60px rgba(60, 40, 120, 0.14);
+  --glass-sheen: rgba(255, 255, 255, 0.75);
+  --glass-fallback: rgba(255, 255, 255, 0.9);
+  --chip-bg: rgba(22, 19, 29, 0.04);
+  --chip-bg-strong: rgba(22, 19, 29, 0.07);
+  --chip-border: rgba(22, 19, 29, 0.14);
+  --nav-fade: linear-gradient(to bottom, rgba(243, 240, 235, 0.92), rgba(243, 240, 235, 0.6) 55%, rgba(243, 240, 235, 0));
+  --marquee-bg: rgba(255, 255, 255, 0.45);
+  --hero-fill: linear-gradient(180deg, #16131d 25%, rgba(22, 19, 29, 0.1) 100%);
+  --badge-bg: rgba(255, 255, 255, 0.6);
+  --ring: rgba(22, 19, 29, 0.5);
+  --ring-fill: rgba(22, 19, 29, 0.06);
+  --drop-border: rgba(22, 19, 29, 0.28);
+  --drop-shadow: 0 6px 16px rgba(40, 30, 80, 0.22);
+  --keycap-drop: 0 14px 30px rgba(40, 30, 80, 0.22);
+  --grain: 0.05;
+}
+
+/* theme switch: the new theme is revealed in a circle from the toggle */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 *,
@@ -28,9 +105,9 @@ html {
 body {
   margin: 0;
   background:
-    radial-gradient(900px circle at 85% 8%, rgba(143, 196, 255, 0.16), transparent 60%),
-    radial-gradient(800px circle at 5% 40%, rgba(255, 138, 115, 0.13), transparent 60%),
-    radial-gradient(900px circle at 80% 85%, rgba(201, 184, 255, 0.12), transparent 60%),
+    radial-gradient(900px circle at 85% 8%, var(--blob-a), transparent 60%),
+    radial-gradient(800px circle at 5% 40%, var(--blob-b), transparent 60%),
+    radial-gradient(900px circle at 80% 85%, var(--blob-c), transparent 60%),
     var(--bg);
   background-attachment: fixed;
   color: var(--fg);

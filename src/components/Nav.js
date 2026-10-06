@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { profile } from '../data';
 import { useClock } from '../hooks';
+import ThemeToggle from './ThemeToggle';
 
 const links = [
   { href: '#work', label: 'Work' },
@@ -46,22 +47,26 @@ export default function Nav() {
         {profile.location.split(',')[0]} — {time}
       </p>
 
-      <nav className="nav__links glass-pill" aria-label="Primary">
-        {links.map((l) => (
-          <a key={l.href} href={l.href} className="link-underline" data-cursor="hover">
-            {l.label}
-          </a>
-        ))}
-      </nav>
+      <div className="nav__right">
+        <nav className="nav__links glass-pill" aria-label="Primary">
+          {links.map((l) => (
+            <a key={l.href} href={l.href} className="link-underline" data-cursor="hover">
+              {l.label}
+            </a>
+          ))}
+        </nav>
 
-      <button
-        className="nav__burger"
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-        aria-controls="menu"
-      >
-        <span className="mono">{open ? 'Close' : 'Menu'}</span>
-      </button>
+        <ThemeToggle />
+
+        <button
+          className="nav__burger"
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          aria-controls="menu"
+        >
+          <span className="mono">{open ? 'Close' : 'Menu'}</span>
+        </button>
+      </div>
 
       <div id="menu" className="menu" aria-hidden={!open}>
         {links.map((l, i) => (

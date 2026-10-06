@@ -5,6 +5,15 @@
     <link rel="icon" href="%PUBLIC_URL%/Ashmit.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#07060c" />
+    <script>
+      // apply a saved light theme before first paint (dark is the default)
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.dataset.theme = 'light';
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f3f0eb');
+        }
+      } catch (e) {}
+    </script>
     <meta
       name="description"
       content="Ashmit Kiran Bhandary — developer in Bengaluru building cinematic websites, local-first AI and IoT systems."
