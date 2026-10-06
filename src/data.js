@@ -168,7 +168,7 @@ export const experience = [
   },
   {
     when: 'Mar – Jun 2025',
-    role: 'Web Development Intern (paid)',
+    role: 'Web Development Intern',
     org: '1learnTLS, Bengaluru',
     text: 'Built the company website from scratch — design to deployment — and met every deadline independently.',
   },
