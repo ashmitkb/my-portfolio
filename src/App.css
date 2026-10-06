@@ -830,57 +830,105 @@ em {
   letter-spacing: -0.055em;
   max-width: 12ch;
 }
-.contact__row {
-  display: flex;
-  align-items: center;
-  gap: clamp(24px, 5vw, 80px);
-  flex-wrap: wrap;
-  margin: clamp(48px, 7vw, 100px) 0;
-}
 .magnetic {
   display: inline-block;
   transition: transform 0.4s var(--ease);
 }
-.btn-round {
+
+/* Compose panel: big email on glass, with keycap buttons echoing the 3D pad */
+.compose {
   display: grid;
-  place-items: center;
-  width: clamp(130px, 14vw, 190px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--grad);
-  color: #14101f;
-  font-weight: 600;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.6), 0 20px 60px rgba(255, 138, 115, 0.3);
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'label label'
+    'email keys';
+  align-items: end;
+  gap: 18px 32px;
+  max-width: min(1040px, 58vw);
+  margin: clamp(48px, 7vw, 96px) 0 clamp(56px, 8vw, 110px);
+  padding: clamp(24px, 3.4vw, 44px);
 }
-.btn-round::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--fg);
-  border-radius: 50%;
-  transform: translateY(100%);
-  transition: transform 0.6s var(--ease);
-  z-index: -1;
-}
-.btn-round:hover::before,
-.btn-round:focus-visible::before {
-  transform: none;
-}
-.contact__mail {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+.compose__label {
+  grid-area: label;
+  display: inline-flex;
+  align-items: center;
   gap: 10px;
-}
-.contact__mail > button {
-  font-size: clamp(1.4rem, 3.2vw, 2.6rem);
-  letter-spacing: -0.03em;
-}
-.contact__mail .mono {
   color: var(--muted);
+}
+.compose__email {
+  grid-area: email;
+  position: relative;
+  font-size: clamp(1.6rem, 4.2vw, 3.8rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  overflow-wrap: anywhere;
+  background: linear-gradient(90deg, var(--fg), var(--fg)) 0 0 / 100% 100% no-repeat, var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: background-size 0.8s var(--ease);
+}
+.compose__email:hover,
+.compose__email:focus-visible {
+  background-size: 0% 100%, auto;
+}
+.compose__keys {
+  grid-area: keys;
+  display: flex;
+  gap: 14px;
+}
+
+.keycap {
+  --side: #a39daf;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 30px 21px;
+  border-radius: 18px;
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: #6f5ee8;
+  background: linear-gradient(180deg, #fbf9fb 0%, #e6e1e8 100%);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    inset 0 -3px 6px rgba(120, 100, 160, 0.18),
+    0 6px 0 var(--side),
+    0 14px 30px rgba(0, 0, 0, 0.45);
+  transform: translateY(0);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.3s;
+}
+.keycap:hover {
+  filter: brightness(1.06);
+}
+.keycap:active {
+  transform: translateY(5px);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    inset 0 -3px 6px rgba(120, 100, 160, 0.18),
+    0 1px 0 var(--side),
+    0 6px 14px rgba(0, 0, 0, 0.4);
+}
+.keycap--accent {
+  --side: #3324b8;
+  color: #eeebff;
+  background: linear-gradient(180deg, #7f70ff 0%, #5543ff 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -3px 8px rgba(30, 10, 120, 0.35),
+    0 6px 0 var(--side),
+    0 14px 40px rgba(90, 72, 255, 0.45);
+}
+.keycap--accent:active {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -3px 8px rgba(30, 10, 120, 0.35),
+    0 1px 0 var(--side),
+    0 6px 20px rgba(90, 72, 255, 0.4);
 }
 .contact__foot {
   display: flex;
@@ -955,6 +1003,11 @@ em {
   }
   .acc__panel-inner > p {
     padding-bottom: 1.2rem;
+  }
+  .compose {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'label' 'email' 'keys';
+    max-width: none;
   }
 }
 

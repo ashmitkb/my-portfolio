@@ -13,9 +13,9 @@ import { legendTexture } from './legend';
 import { runAction, typeLetter } from './actions';
 
 const U = 1; // key pitch
-const GAP = 0.08; // space between caps
+const GAP = 0.035; // space between caps
 const H = 0.62; // keycap height
-const INSET = 0.1; // how much narrower the top of a cap is than its base
+const INSET = 0.075; // how much narrower the top of a cap is than its base
 const BORDER = 0.34; // case border around the key grid
 export const MODEL_SCALE = 1.45;
 

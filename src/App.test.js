@@ -21,5 +21,6 @@ test('renders hero, sections and contact', () => {
   ).toBeInTheDocument();
   expect(screen.getByText(/selected work/i)).toBeInTheDocument();
   expect(screen.getByText(/apple website replica/i)).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /ashmitbdry@gmail.com/i })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /ashmitbdry@gmail.com/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /copy email/i })).toBeInTheDocument();
 });
