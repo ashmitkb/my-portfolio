@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/my-portfolio/static/css/main.498404ab.css",
-    "main.js": "/my-portfolio/static/js/main.a8bf510c.js",
-    "static/js/653.8b2ef4dc.chunk.js": "/my-portfolio/static/js/653.8b2ef4dc.chunk.js",
+    "main.css": "/my-portfolio/static/css/main.5e74b5be.css",
+    "main.js": "/my-portfolio/static/js/main.db4e46bc.js",
+    "static/js/653.69d31b64.chunk.js": "/my-portfolio/static/js/653.69d31b64.chunk.js",
     "static/js/453.acca0757.chunk.js": "/my-portfolio/static/js/453.acca0757.chunk.js",
     "static/js/615.a04a1175.chunk.js": "/my-portfolio/static/js/615.a04a1175.chunk.js",
     "static/media/apple.png": "/my-portfolio/static/media/apple.a219a793a2832bc43dcb.png",
     "static/media/1learntls.png": "/my-portfolio/static/media/1learntls.e0a7a1f7f4374577d9d5.png",
     "static/media/me.jpg": "/my-portfolio/static/media/me.a685dd892b9333929126.jpg",
     "index.html": "/my-portfolio/index.html",
-    "main.498404ab.css.map": "/my-portfolio/static/css/main.498404ab.css.map",
-    "main.a8bf510c.js.map": "/my-portfolio/static/js/main.a8bf510c.js.map",
-    "653.8b2ef4dc.chunk.js.map": "/my-portfolio/static/js/653.8b2ef4dc.chunk.js.map",
+    "main.5e74b5be.css.map": "/my-portfolio/static/css/main.5e74b5be.css.map",
+    "main.db4e46bc.js.map": "/my-portfolio/static/js/main.db4e46bc.js.map",
+    "653.69d31b64.chunk.js.map": "/my-portfolio/static/js/653.69d31b64.chunk.js.map",
     "453.acca0757.chunk.js.map": "/my-portfolio/static/js/453.acca0757.chunk.js.map",
     "615.a04a1175.chunk.js.map": "/my-portfolio/static/js/615.a04a1175.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.498404ab.css",
-    "static/js/main.a8bf510c.js"
+    "static/css/main.5e74b5be.css",
+    "static/js/main.db4e46bc.js"
   ]
 }
