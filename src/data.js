@@ -22,7 +22,7 @@ export const profile = {
 };
 
 export const about =
-  'I’m a BCA student at CHRIST University, Bengaluru, who builds things that go beyond coursework — premium websites for real clients, an AI system that clears traffic for ambulances, and a voice assistant that runs entirely on my own laptop. I care about the details people feel, whether that’s a scroll animation or a p-value.';
+  'I’m a BCA student at CHRIST University, Bengaluru, who builds things that go beyond coursework — premium websites for real clients, an AI system that clears traffic for ambulances, and a voice assistant that runs entirely on my own laptop. I care about the details people feel, from the smallest scroll animation to the last line of code.';
 
 export const now = [
   {
