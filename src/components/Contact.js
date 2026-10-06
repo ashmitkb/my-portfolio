@@ -19,7 +19,7 @@ export default function Contact() {
     try {
       await navigator.clipboard.writeText(profile.email);
       setCopied(true);
-      toast('Email copied — talk soon ✦');
+      toast('Email copied. Talk soon ✦');
       setTimeout(() => setCopied(false), 2000);
     } catch {
       window.location.href = `mailto:${profile.email}`;
@@ -36,7 +36,7 @@ export default function Contact() {
       <div className="compose glass" onMouseMove={track}>
         <p className="compose__label mono">
           <span className="hairline" aria-hidden="true" />
-          Say hello — always open to new projects
+          Say hello. Always open to new projects.
         </p>
         <a href={`mailto:${profile.email}`} className="compose__email" data-cursor="hover">
           {profile.email}

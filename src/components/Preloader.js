@@ -41,7 +41,7 @@ export default function Preloader({ onDone }) {
       aria-label="Loading"
     >
       <div className="preloader__inner">
-        <span className="preloader__label mono">Portfolio — {new Date().getFullYear()}</span>
+        <span className="preloader__label mono">Portfolio · {new Date().getFullYear()}</span>
         <span className="preloader__count">{String(count).padStart(3, '0')}</span>
         <span className="preloader__bar">
           <span style={{ transform: `scaleX(${count / 100})` }} />

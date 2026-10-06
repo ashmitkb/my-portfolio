@@ -39,13 +39,13 @@ export function runAction(key) {
       else go('#services');
       break;
     case 'hire':
-      toast('Let’s talk — I’m open to work ✦');
+      toast('Let’s talk. I’m open to work ✦');
       go('#contact');
       break;
     case 'heart': {
       const n = readLikes() + 1;
       saveLikes(n);
-      toast(`♥ × ${n} — thanks for the love`);
+      toast(`♥ × ${n}. Thanks for the love`);
       window.dispatchEvent(new CustomEvent('scene-burst'));
       break;
     }
@@ -63,10 +63,10 @@ export function typeLetter(letter) {
   typedTimer = setTimeout(() => (typed = ''), 2500);
   if (typed === 'UIUX') {
     typed = '';
-    toast('UI/UX unlocked ✦ — here’s what I do');
+    toast('UI/UX unlocked ✦ Here’s what I do');
     window.dispatchEvent(new CustomEvent('scene-burst'));
     go('#services');
   } else {
-    toast(`${typed.split('').join(' ')}${' _'.repeat(4 - typed.length)}   — try U I U X`);
+    toast(`${typed.split('').join(' ')}${' _'.repeat(4 - typed.length)}   · try U I U X`);
   }
 }

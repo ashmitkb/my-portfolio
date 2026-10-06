@@ -6,7 +6,7 @@ const letters = 'ASHMIT'.split('');
 export default function Hero({ ready }) {
   return (
     <section id="top" className={`hero ${ready ? 'is-ready' : ''}`}>
-      <h1 className="hero__title" aria-label={`${profile.name} — ${profile.role}`}>
+      <h1 className="hero__title" aria-label={`${profile.name}, ${profile.role}`}>
         {letters.map((l, i) => (
           <span className="mask" key={i} aria-hidden="true">
             <span className="mask__inner" style={{ '--d': `${i * 70}ms` }}>
@@ -26,7 +26,7 @@ export default function Hero({ ready }) {
           <a href="#work" className="btn-glass" data-cursor="hover">
             Explore my work <span aria-hidden="true">↓</span>
           </a>
-          <span className="hero__hint mono">Click the keys — or type U I U X.</span>
+          <span className="hero__hint mono">Click the keys, or type U I U X.</span>
         </div>
         <KeyButtons />
       </div>

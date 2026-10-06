@@ -44,7 +44,7 @@ export default function Nav() {
       </a>
 
       <p className="nav__meta mono" aria-label="Local time">
-        {profile.location.split(',')[0]} — {time}
+        {profile.location.split(',')[0]} · {time}
       </p>
 
       <div className="nav__right">

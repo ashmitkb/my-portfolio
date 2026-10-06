@@ -7,7 +7,7 @@ import meImg from './assets/me.jpg';
 export const profile = {
   name: 'Ashmit',
   fullName: 'Ashmit Kiran Bhandary',
-  role: 'Developer — web, AI & IoT',
+  role: 'Web, AI & IoT developer',
   tagline: 'BCA ’27 · CHRIST University, Bengaluru',
   email: 'ashmitbdry@gmail.com',
   location: 'Bengaluru, India',
@@ -18,11 +18,11 @@ export const profile = {
   // Cursor style: 'droplet', 'ring' or 'invert'. Try them live with ?cursor=ring etc.
   cursor: 'droplet',
   intro:
-    'I build things where curiosity, code and data meet — cinematic websites, local-first AI and IoT systems for the real world.',
+    'I build things where curiosity, code and data meet: cinematic websites, local-first AI and IoT systems for the real world.',
 };
 
 export const about =
-  'I’m a BCA student at CHRIST University, Bengaluru, who builds things that go beyond coursework — premium websites for real clients, an AI system that clears traffic for ambulances, and a voice assistant that runs entirely on my own laptop. I care about the details people feel, from the smallest scroll animation to the last line of code.';
+  'I’m a BCA student at CHRIST University, Bengaluru, who builds things that go beyond coursework, like premium websites for real clients, an AI system that clears traffic for ambulances, and a voice assistant that runs entirely on my own laptop. I care about the details people feel, from the smallest scroll animation to the last line of code.';
 
 export const now = [
   {
@@ -43,11 +43,11 @@ export const aboutStats = [
   { value: 382, label: 'Survey responses analysed in my research internship' },
   { value: 20, label: 'Papers reviewed for my F1 research' },
   { value: 2, label: 'Inter-university first places' },
-  { value: 3, label: 'Languages — English, Hindi & Tulu, plus a little Kannada' },
+  { value: 3, label: 'Languages: English, Hindi & Tulu, plus a little Kannada' },
 ];
 
 export const offKeyboard = [
-  { label: 'Football', text: 'Captain of my department team — strategy on and off the pitch.' },
+  { label: 'Football', text: 'Captain of my department team, leading strategy on and off the pitch.' },
   { label: 'Gaming', text: 'Ran team operations for Vizerion, CHRIST’s gaming club.' },
   { label: 'Game dev', text: 'Building a Unity game with a friend, together over GitHub.' },
   { label: 'Abroad', text: 'Spent a semester at Edge Hill University in England.' },
@@ -67,7 +67,7 @@ export const projects = [
     title: 'AI-Driven Green Corridor',
     kind: 'IoT · AI',
     year: 'Jan 2025 – now',
-    hook: 'When an ambulance is stuck at a red light, a green signal isn’t enough — the traffic ahead has to clear too. This system does both.',
+    hook: 'When an ambulance is stuck at a red light, a green signal isn’t enough. The traffic ahead has to clear too, and this system does both.',
     highlights: [
       'Demoed to the Bengaluru Traffic Police Commissioner, who offered a junction for a pilot',
       'Siren detection relayed over LoRa, confirmed by camera, signal override via ESP32',
@@ -89,7 +89,7 @@ export const projects = [
     ],
     tags: ['HTML', 'CSS', 'JavaScript'],
     href: 'https://github.com/ashmitkb/yuki',
-    poster: { word: '雪', sub: 'Yuki — omakase & cocktail bar', serif: true },
+    poster: { word: '雪', sub: 'Yuki · omakase & cocktail bar', serif: true },
     colors: ['#ff9d8a', '#5a1a2a', '#0d0608'],
   },
   {
@@ -97,7 +97,7 @@ export const projects = [
     title: 'Deo',
     kind: 'Local voice assistant',
     year: 'Mar – Jul 2026',
-    hook: 'A voice assistant that runs entirely on my own laptop — no cloud required.',
+    hook: 'A voice assistant that runs entirely on my own laptop, with no cloud required.',
     highlights: [
       'faster-whisper in, a local Qwen2.5 7B for reasoning, Piper TTS out',
       'Tool-calling for apps, web search and productivity; persistent JSON memory',
@@ -154,7 +154,7 @@ export const projects = [
 export const otherWork = [
   {
     title: 'Game development',
-    text: 'Working on a few game projects in Unity and C# — designing mechanics and building playable prototypes.',
+    text: 'Working on a few game projects in Unity and C#, designing mechanics and building playable prototypes.',
     tags: ['Unity', 'C#', 'Game design'],
   },
 ];
@@ -164,13 +164,13 @@ export const experience = [
     when: 'Nov 2025 – Mar 2026',
     role: 'Research Intern',
     org: 'CHRIST (Deemed to be University)',
-    text: 'Faculty seed-money study on how smartphone addiction, academic anxiety and cybersecurity behaviour connect among students. Owned the data pipeline end to end — 382 respondents, reliability checks and binary logistic regression in Python. Findings feed a proposed IT policy addendum on digital wellbeing.',
+    text: 'Faculty seed-money study on how smartphone addiction, academic anxiety and cybersecurity behaviour connect among students. Owned the data pipeline end to end: 382 respondents, reliability checks and binary logistic regression in Python. Findings feed a proposed IT policy addendum on digital wellbeing.',
   },
   {
     when: 'Mar – Jun 2025',
     role: 'Web Development Intern',
     org: '1learnTLS, Bengaluru',
-    text: 'Built the company website from scratch — design to deployment — and met every deadline independently.',
+    text: 'Built the company website from scratch, from design to deployment, and met every deadline independently.',
   },
   {
     when: 'Jan – May 2025',
@@ -190,27 +190,27 @@ export const extras = [
   {
     title: 'Leadership',
     items: [
-      'Team operations lead — Vizerion Gaming Club, CHRIST (2025–26)',
-      'Captain — departmental football team, 15 players (2024–25)',
+      'Team operations lead, Vizerion Gaming Club, CHRIST (2025–26)',
+      'Captain of the departmental football team, 15 players (2024–25)',
     ],
   },
   {
     title: 'Awards',
     items: [
-      '1st place — inter-university tech quiz, Presidency University (Dec 2024)',
-      '1st place — inter-university treasure hunt, Bishop Cotton Academy (Jan 2025)',
+      '1st place, inter-university tech quiz at Presidency University (Dec 2024)',
+      '1st place, inter-university treasure hunt at Bishop Cotton Academy (Jan 2025)',
     ],
   },
   {
     title: 'Certifications',
-    items: ['Google Data Analytics (2026)', 'AWS Cloud (2025)', 'E-Business — NPTEL (2025)'],
+    items: ['Google Data Analytics (2026)', 'AWS Cloud (2025)', 'E-Business, NPTEL (2025)'],
   },
 ];
 
 export const services = [
   {
     title: 'Web Development',
-    body: 'Cinematic, mobile-polished websites — scroll animation, parallax and glass UI — taken from a blank page to a live deployment.',
+    body: 'Cinematic, mobile-polished websites with scroll animation, parallax and glass UI, taken from a blank page to a live deployment.',
     items: ['1learnTLS', 'YUKI', 'React · Vite'],
   },
   {
@@ -220,7 +220,7 @@ export const services = [
   },
   {
     title: 'IoT & Systems',
-    body: 'Hardware and software that work together in the real world — sensors, long-range radio and edge AI wired into existing infrastructure.',
+    body: 'Hardware and software that work together in the real world: sensors, long-range radio and edge AI wired into existing infrastructure.',
     items: ['ESP32 · LoRa', 'Raspberry Pi + Coral', 'Green Corridor'],
   },
 ];
