@@ -43,7 +43,7 @@ export const aboutStats = [
   { value: 382, label: 'Survey responses analysed in my research internship' },
   { value: 20, label: 'Papers reviewed for my F1 research' },
   { value: 2, label: 'Inter-university first places' },
-  { value: 3, label: 'Languages — English, Hindi & Kannada' },
+  { value: 3, label: 'Languages — English, Hindi & Tulu, plus a little Kannada' },
 ];
 
 export const offKeyboard = [
