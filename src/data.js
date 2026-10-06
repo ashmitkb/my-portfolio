@@ -16,6 +16,8 @@ export const profile = {
   // Set these to URLs to make the Résumé and Figma keys open them directly.
   resume: null,
   figma: null,
+  // Cursor style: 'droplet', 'ring' or 'invert'. Try them live with ?cursor=ring etc.
+  cursor: 'droplet',
   intro:
     'I build things where curiosity, code and data meet — cinematic websites, local-first AI and IoT systems for the real world.',
 };
@@ -36,6 +38,20 @@ export const now = [
     label: 'Deo',
     text: 'Next up: a free wake-word engine and more reliable tool-calling.',
   },
+];
+
+export const aboutStats = [
+  { value: 382, label: 'Survey responses analysed in my research internship' },
+  { value: 20, label: 'Papers reviewed for my F1 research' },
+  { value: 2, label: 'Inter-university first places' },
+  { value: 3, label: 'Languages — English, Hindi & Kannada' },
+];
+
+export const offKeyboard = [
+  { label: 'Football', text: 'Captain of my department team — strategy on and off the pitch.' },
+  { label: 'Gaming', text: 'Ran team operations for Vizerion, CHRIST’s gaming club.' },
+  { label: 'Game dev', text: 'Building a Unity game with a friend, together over GitHub.' },
+  { label: 'Abroad', text: 'Spent a semester at Edge Hill University in England.' },
 ];
 
 export const skills = [
@@ -138,19 +154,9 @@ export const projects = [
 
 export const otherWork = [
   {
-    title: 'Vanguard Clash',
-    text: 'Game design case study: a Clash Royale-style card battler with no pay-to-win, backed by a 500-response player survey.',
-    tags: ['Game design', 'Data analysis'],
-  },
-  {
-    title: 'CF-PLA capstone',
-    text: 'Proposal on optimising carbon-fibre-reinforced PLA for FDM 3D printing.',
-    tags: ['Materials', '3D printing'],
-  },
-  {
-    title: 'DKDC 2027 go-kart',
-    text: 'Procurement planning and parts sourcing for a competition kart, including a Yamaha R15M engine swap.',
-    tags: ['Engineering', 'Procurement'],
+    title: 'Game development',
+    text: 'Working on a few game projects in Unity and C# — designing mechanics and building playable prototypes.',
+    tags: ['Unity', 'C#', 'Game design'],
   },
 ];
 

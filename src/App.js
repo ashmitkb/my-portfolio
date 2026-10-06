@@ -1,6 +1,5 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
-import { useScrollProgressVar } from './hooks';
 import Preloader from './components/Preloader';
 import Cursor from './components/Cursor';
 import Nav from './components/Nav';
@@ -12,21 +11,18 @@ import Services from './components/Services';
 import Experience from './components/Experience';
 import Contact from './components/Contact';
 import SceneLayer from './components/SceneLayer';
-import Lens from './components/Lens';
+import GlassFilter from './components/GlassFilter';
 import Toast from './components/Toast';
 
 function App() {
-  const root = useRef(null);
   const [ready, setReady] = useState(false);
-  useScrollProgressVar(root);
 
   return (
-    <div className="App" ref={root}>
+    <div className="App">
       <Preloader onDone={() => setReady(true)} />
       <Cursor />
-      <Lens />
+      <GlassFilter />
       <SceneLayer />
-      <div className="progress" aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
       <a className="skip" href="#work">
         Skip to content

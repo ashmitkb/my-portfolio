@@ -15,6 +15,8 @@ const POSES = [
   { id: null, x: 1.5, y: 0.02, z: 0, tilt: 0.82, yaw: -0.62, s: 0.66, m: { x: 0.1, y: 0.15, z: -0.6, s: 0.95 } },
   { id: 'work', x: 4.4, y: 2.9, z: -4.5, tilt: 0.7, yaw: -0.95, s: 0.6, m: { x: 0.5, y: -0.6, z: -5, s: 0.85 } },
   { id: 'about', x: 3.6, y: 3.1, z: -4.5, tilt: 0.6, yaw: 0.9, s: 0.5, m: { x: -0.2, y: 1, z: -5, s: 0.75 } },
+  // drifts up out of view while the About text is being read
+  { id: 'about-body', x: 4.4, y: 7.5, z: -4.5, tilt: 0.6, yaw: 1.2, s: 0.5, m: { x: 0, y: 9, z: -5, s: 0.7 } },
   { id: 'experience', x: 4.1, y: 2.3, z: -4, tilt: 0.75, yaw: 0.7, s: 0.52, m: { x: 0, y: -0.4, z: -5, s: 0.85 } },
   { id: 'services', x: 3.9, y: -0.3, z: -3, tilt: 1.1, yaw: -0.3, s: 0.7, m: { x: 0.6, y: -0.6, z: -5, s: 0.85 } },
   { id: 'contact', x: 2.7, y: -0.2, z: -1.6, tilt: 1.0, yaw: -0.4, s: 0.62, m: { x: 1.3, y: -1, z: -2.5, s: 0.55 } },
@@ -23,7 +25,11 @@ const POSES = [
 const smooth = (t) => t * t * (3 - 2 * t);
 
 function samplePose(y, mobile) {
-  const stops = POSES.map((p) => (p.id ? document.getElementById(p.id)?.offsetTop ?? 0 : 0));
+  // page-relative top of each anchor (works for nested elements too)
+  const stops = POSES.map((p) => {
+    const el = p.id && document.getElementById(p.id);
+    return el ? el.getBoundingClientRect().top + y : 0;
+  });
   const vh = window.innerHeight;
   // pose is reached when a section's top is ~60% down the viewport
   const pts = stops.map((s, i) => (i === 0 ? 0 : Math.max(0, s - vh * 0.6)));

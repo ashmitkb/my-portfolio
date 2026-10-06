@@ -1,64 +1,93 @@
 import { useEffect, useRef } from 'react';
+import { profile } from '../data';
 import { isFinePointer, prefersReducedMotion } from '../hooks';
 
+export const CURSOR_STYLES = ['droplet', 'ring', 'invert'];
+
+// `?cursor=ring` (or droplet / invert) in the URL overrides the default, so
+// each style can be tried on the live site before committing to one.
+function pickStyle() {
+  try {
+    const q = new URLSearchParams(window.location.search).get('cursor');
+    if (CURSOR_STYLES.includes(q)) return q;
+  } catch {
+    /* ignore malformed URLs */
+  }
+  return CURSOR_STYLES.includes(profile.cursor) ? profile.cursor : 'droplet';
+}
+
 /**
- * Custom cursor with a lagging ring. Grows over `[data-cursor]` elements and
- * shows their label (e.g. "View"). Disabled on touch devices.
+ * Custom cursor. A small shape trails the pointer, grows over `[data-cursor]`
+ * elements and shows their label (e.g. "Open"). Disabled on touch devices.
  */
 export default function Cursor() {
   const dot = useRef(null);
-  const ring = useRef(null);
+  const blob = useRef(null);
+  const shape = useRef(null);
   const label = useRef(null);
 
   useEffect(() => {
     if (!isFinePointer() || prefersReducedMotion()) return undefined;
-    document.documentElement.classList.add('has-cursor');
+    const style = pickStyle();
+    const root = document.documentElement;
+    root.classList.add('has-cursor');
+    root.dataset.cursorStyle = style;
 
     const pos = { x: -100, y: -100 };
     const lag = { x: -100, y: -100 };
+    let state = '';
     let raf;
 
+    const setState = (next, text) => {
+      state = next || '';
+      if (blob.current) blob.current.dataset.state = state;
+      if (label.current) label.current.textContent = text || '';
+    };
     const onMove = (e) => {
       pos.x = e.clientX;
       pos.y = e.clientY;
-      if (dot.current)
-        dot.current.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+      if (dot.current) dot.current.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
     };
     const onOver = (e) => {
       const target = e.target.closest && e.target.closest('[data-cursor]');
-      const r = ring.current;
-      if (!r) return;
-      if (target) {
-        r.dataset.state = target.dataset.cursor || 'hover';
-        if (label.current) label.current.textContent = target.dataset.cursorLabel || '';
-      } else {
-        r.dataset.state = '';
-        if (label.current) label.current.textContent = '';
-      }
+      if (target) setState(target.dataset.cursor || 'hover', target.dataset.cursorLabel);
+      else setState('');
     };
     // 3D scene objects report hover through a custom event
-    const onScene = (e) => {
-      const r = ring.current;
-      if (!r) return;
-      r.dataset.state = e.detail ? e.detail.state : '';
-      if (label.current) label.current.textContent = e.detail ? e.detail.label : '';
-    };
-    window.addEventListener('scene-cursor', onScene);
+    const onScene = (e) => setState(e.detail ? e.detail.state : '', e.detail ? e.detail.label : '');
+    const onLeave = () => root.classList.add('cursor-away');
+    const onEnter = () => root.classList.remove('cursor-away');
+
     const loop = () => {
-      lag.x += (pos.x - lag.x) * 0.16;
-      lag.y += (pos.y - lag.y) * 0.16;
-      if (ring.current)
-        ring.current.style.transform = `translate3d(${lag.x}px, ${lag.y}px, 0)`;
+      const dx = pos.x - lag.x;
+      const dy = pos.y - lag.y;
+      const ease = style === 'invert' ? 0.24 : 0.18;
+      lag.x += dx * ease;
+      lag.y += dy * ease;
+      if (blob.current) blob.current.style.transform = `translate3d(${lag.x}px, ${lag.y}px, 0)`;
+      // the droplet stretches along its direction of travel, like liquid
+      if (style === 'droplet' && shape.current) {
+        const speed = Math.hypot(dx, dy);
+        const stretch = Math.min(speed / 150, 0.5) * (state ? 0.25 : 1);
+        const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+        shape.current.style.transform = `rotate(${angle.toFixed(1)}deg) scale(${(1 + stretch).toFixed(3)}, ${(1 - stretch * 0.55).toFixed(3)})`;
+      }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
 
     window.addEventListener('mousemove', onMove, { passive: true });
     document.addEventListener('mouseover', onOver, { passive: true });
+    document.documentElement.addEventListener('mouseleave', onLeave);
+    document.documentElement.addEventListener('mouseenter', onEnter);
+    window.addEventListener('scene-cursor', onScene);
     return () => {
-      document.documentElement.classList.remove('has-cursor');
+      root.classList.remove('has-cursor', 'cursor-away');
+      delete root.dataset.cursorStyle;
       window.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseover', onOver);
+      document.documentElement.removeEventListener('mouseleave', onLeave);
+      document.documentElement.removeEventListener('mouseenter', onEnter);
       window.removeEventListener('scene-cursor', onScene);
       cancelAnimationFrame(raf);
     };
@@ -66,8 +95,9 @@ export default function Cursor() {
 
   return (
     <>
-      <div ref={ring} className="cursor-ring" aria-hidden="true">
-        <span ref={label} className="cursor-label mono" />
+      <div ref={blob} className="cursor" aria-hidden="true">
+        <div ref={shape} className="cursor__shape" />
+        <span ref={label} className="cursor__label mono" />
       </div>
       <div ref={dot} className="cursor-dot" aria-hidden="true" />
     </>
