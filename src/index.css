@@ -1,10 +1,12 @@
 :root {
-  --bg: #0a0a0a;
-  --bg-2: #121212;
+  --bg: #07060c;
+  --bg-2: #0d0b14;
   --fg: #f2efe9;
   --muted: #8a8780;
   --line: rgba(242, 239, 233, 0.14);
-  --accent: #ff5b2e;
+  --accent: #ff8a73;
+  --sky: #8fc4ff;
+  --grad: linear-gradient(100deg, #ff9d8a 0%, #c9b8ff 50%, #8fc4ff 100%);
   --serif: 'Instrument Serif', 'Times New Roman', serif;
   --sans: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -25,7 +27,12 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(900px circle at 85% 8%, rgba(143, 196, 255, 0.16), transparent 60%),
+    radial-gradient(800px circle at 5% 40%, rgba(255, 138, 115, 0.13), transparent 60%),
+    radial-gradient(900px circle at 80% 85%, rgba(201, 184, 255, 0.12), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--fg);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;

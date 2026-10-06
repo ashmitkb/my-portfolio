@@ -1,0 +1,152 @@
+.spline-scene {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden; /* Prevent scrolling issues on mobile */
+}
+
+spline-viewer {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.spline-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--bg);
+  z-index: 10;
+}
+
+.spline-loader p {
+  margin-top: 1rem;
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Hide the Spline branding button */
+.spline-watermark {
+  display: none !important;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  .spline-scene {
+    /* Ensure proper mobile viewport handling */
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    position: fixed; /* Use fixed for better mobile performance */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    /* Prevent mobile browser zoom issues */
+    touch-action: pan-x pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  spline-viewer {
+    width: 100%;
+    height: 100%;
+    /* Optimize for mobile performance */
+    transform: translateZ(0); /* Hardware acceleration */
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+    /* Prevent mobile selection/zoom issues */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .spline-loader {
+    /* Mobile-optimized loader */
+    background-color: var(--bg, #000);
+    font-size: 14px;
+  }
+  
+  .spline-loader p {
+    font-size: 0.9rem;
+    padding: 0 1rem;
+    text-align: center;
+  }
+}
+
+/* Tablet-specific adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .spline-scene {
+    /* Tablet optimizations */
+    touch-action: pan-x pan-y;
+  }
+  
+  spline-viewer {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+}
+
+/* Large mobile devices (landscape) */
+@media (max-width: 768px) and (orientation: landscape) {
+  .spline-scene {
+    height: 100vh;
+    width: 100vw;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .spline-scene {
+    /* Ensure it works on very small screens */
+    min-width: 320px;
+  }
+  
+  .spline-loader {
+    padding: 1rem;
+  }
+  
+  .spline-loader p {
+    font-size: 0.8rem;
+  }
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-appearance: none) {
+  @media (max-width: 768px) {
+    .spline-scene {
+      /* Fix iOS Safari viewport issues */
+      height: -webkit-fill-available;
+      min-height: -webkit-fill-available;
+    }
+  }
+}
+
+/* Android Chrome specific fixes */
+@media (max-width: 768px) {
+  .spline-scene {
+    /* Prevent address bar resize issues */
+    height: 100dvh; /* Dynamic viewport height */
+    min-height: 100dvh;
+  }
+}
+
+/* High DPI displays (Retina) */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  spline-viewer {
+    /* Optimize for high-resolution displays */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}

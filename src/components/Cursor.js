@@ -36,6 +36,14 @@ export default function Cursor() {
         if (label.current) label.current.textContent = '';
       }
     };
+    // 3D scene objects report hover through a custom event
+    const onScene = (e) => {
+      const r = ring.current;
+      if (!r) return;
+      r.dataset.state = e.detail ? e.detail.state : '';
+      if (label.current) label.current.textContent = e.detail ? e.detail.label : '';
+    };
+    window.addEventListener('scene-cursor', onScene);
     const loop = () => {
       lag.x += (pos.x - lag.x) * 0.16;
       lag.y += (pos.y - lag.y) * 0.16;
@@ -51,6 +59,7 @@ export default function Cursor() {
       document.documentElement.classList.remove('has-cursor');
       window.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseover', onOver);
+      window.removeEventListener('scene-cursor', onScene);
       cancelAnimationFrame(raf);
     };
   }, []);

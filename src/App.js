@@ -10,6 +10,8 @@ import Work from './components/Work';
 import About from './components/About';
 import Services from './components/Services';
 import Contact from './components/Contact';
+import SceneLayer from './components/SceneLayer';
+import Lens from './components/Lens';
 
 function App() {
   const root = useRef(null);
@@ -20,6 +22,8 @@ function App() {
     <div className="App" ref={root}>
       <Preloader onDone={() => setReady(true)} />
       <Cursor />
+      <Lens />
+      <SceneLayer />
       <div className="progress" aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
       <a className="skip" href="#work">

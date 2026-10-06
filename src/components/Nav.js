@@ -41,10 +41,10 @@ export default function Nav() {
       </a>
 
       <p className="nav__meta mono" aria-label="Local time">
-        {profile.location} — {time}
+        {profile.location.split(',')[0]} — {time}
       </p>
 
-      <nav className="nav__links" aria-label="Primary">
+      <nav className="nav__links glass-pill" aria-label="Primary">
         {links.map((l) => (
           <a key={l.href} href={l.href} className="link-underline" data-cursor="hover">
             {l.label}

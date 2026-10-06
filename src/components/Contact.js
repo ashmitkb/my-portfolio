@@ -22,7 +22,7 @@ export default function Contact() {
     <footer id="contact" className="section contact">
       <p className="eyebrow mono">(04) Contact</p>
       <h2 ref={ref} className={`contact__title reveal ${seen ? 'is-in' : ''}`}>
-        Let’s build something <em>unforgettable</em>
+        Let’s make something <em>unforgettable</em>
       </h2>
 
       <div className="contact__row">

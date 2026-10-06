@@ -9,13 +9,13 @@ export default function Services() {
   return (
     <section id="services" className="section services">
       <div ref={ref} className={`section__head reveal ${seen ? 'is-in' : ''}`}>
-        <p className="eyebrow mono">(03) Services</p>
+        <p className="eyebrow mono">(03) Capabilities</p>
         <h2 className="display">
-          How I can <em>help</em>
+          What I <em>do</em>
         </h2>
       </div>
 
-      <ul className="acc">
+      <ul className="acc glass">
         {services.map((s, i) => {
           const isOpen = open === i;
           return (

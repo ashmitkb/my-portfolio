@@ -1,24 +1,20 @@
-import { useRef, useState } from 'react';
 import { projects } from '../data';
-import { isFinePointer, useInView } from '../hooks';
+import { useInView } from '../hooks';
 
 const art = (c) =>
-  `radial-gradient(circle at 25% 30%, ${c[0]} 0%, transparent 55%),
-   radial-gradient(circle at 80% 75%, ${c[1]} 0%, transparent 50%),
-   ${c[2]}`;
+  `radial-gradient(circle at 20% 25%, ${c[0]} 0%, transparent 55%),
+   radial-gradient(circle at 85% 80%, ${c[1]} 0%, transparent 50%), ${c[2]}`;
+
+const track = (e) => {
+  const r = e.currentTarget.getBoundingClientRect();
+  e.currentTarget.style.setProperty('--mx', `${e.clientX - r.left}px`);
+  e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`);
+};
 
 export default function Work() {
-  const [active, setActive] = useState(null);
-  const preview = useRef(null);
   const [head, seen] = useInView();
-
-  const onMove = (e) => {
-    if (!preview.current || !isFinePointer()) return;
-    preview.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-  };
-
   return (
-    <section id="work" className="section work" onMouseMove={onMove}>
+    <section id="work" className="section work">
       <div ref={head} className={`section__head reveal ${seen ? 'is-in' : ''}`}>
         <p className="eyebrow mono">(01) Selected Work</p>
         <h2 className="display">
@@ -26,52 +22,40 @@ export default function Work() {
         </h2>
       </div>
 
-      <ul className="work__list" onMouseLeave={() => setActive(null)}>
+      <ul className="stack">
         {projects.map((p, i) => (
-          <WorkRow
-            key={p.id}
-            p={p}
-            index={i}
-            dimmed={active !== null && active !== i}
-            onEnter={() => setActive(i)}
-          />
+          <li key={p.id} className="stack__item" style={{ '--i': i }}>
+            <a
+              className="card glass"
+              href={p.href}
+              target={p.href.startsWith('http') ? '_blank' : undefined}
+              rel="noopener noreferrer"
+              onMouseMove={track}
+              data-cursor="view"
+              data-cursor-label="Open"
+            >
+              <div className="card__media" style={{ background: art(p.colors) }}>
+                {p.image && <img src={p.image} alt={`${p.title} preview`} loading="lazy" />}
+                <span className="card__id mono">{p.id}</span>
+              </div>
+              <div className="card__body">
+                <p className="mono card__meta">
+                  {p.kind} · {p.year}
+                </p>
+                <h3 className="card__title">{p.title}</h3>
+                <ul className="tags mono">
+                  {p.tags.map((t) => (
+                    <li key={t}>{t}</li>
+                  ))}
+                </ul>
+                <span className="card__go" aria-hidden="true">
+                  ↗
+                </span>
+              </div>
+            </a>
+          </li>
         ))}
       </ul>
-
-      <div
-        ref={preview}
-        className={`work__preview ${active !== null ? 'is-on' : ''}`}
-        aria-hidden="true"
-      >
-        <div
-          className="work__preview-card"
-          style={{ background: active !== null ? art(projects[active].colors) : 'none' }}
-        >
-          <span className="mono">{active !== null ? projects[active].kind : ''}</span>
-        </div>
-      </div>
     </section>
-  );
-}
-
-function WorkRow({ p, index, dimmed, onEnter }) {
-  const [ref, seen] = useInView({ threshold: 0.3 });
-  return (
-    <li
-      ref={ref}
-      className={`work__row reveal ${seen ? 'is-in' : ''} ${dimmed ? 'is-dim' : ''}`}
-      style={{ '--delay': `${index * 70}ms` }}
-      onMouseEnter={onEnter}
-      onFocus={onEnter}
-    >
-      <a href={p.href} data-cursor="view" data-cursor-label="View">
-        <span className="work__id mono">{p.id}</span>
-        <span className="work__title">{p.title}</span>
-        <span className="work__kind">{p.kind}</span>
-        <span className="work__tags mono">{p.tags.join(' / ')}</span>
-        <span className="work__year mono">{p.year}</span>
-        <span className="work__thumb" style={{ background: art(p.colors) }} aria-hidden="true" />
-      </a>
-    </li>
   );
 }
