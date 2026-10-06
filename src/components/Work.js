@@ -38,6 +38,7 @@ function Card({ p }) {
         rel: external ? 'noopener noreferrer' : undefined,
         'data-cursor': 'view',
         'data-cursor-label': external && p.href.includes('github.com') ? 'Code' : 'Open',
+        'data-cursor-arrow': '',
       }
     : {};
 

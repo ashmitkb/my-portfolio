@@ -3,6 +3,23 @@ import { flushSync } from 'react-dom';
 import { prefersReducedMotion } from '../hooks';
 
 const STORAGE_KEY = 'theme';
+
+const Moon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z" fill="currentColor" />
+  </svg>
+);
+const Sun = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="4.6" fill="currentColor" />
+    <path
+      d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.5 1.5M17.1 17.1l1.5 1.5M5.4 18.6l1.5-1.5M17.1 6.9l1.5-1.5"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
 const META_COLOR = { dark: '#07060c', light: '#f3f0eb' };
 
 const currentTheme = () =>
@@ -64,12 +81,14 @@ export default function ThemeToggle() {
       data-cursor="hover"
     >
       <span className="theme-toggle__icon is-moon" aria-hidden="true">
-        ☾
+        <Moon />
       </span>
       <span className="theme-toggle__icon is-sun" aria-hidden="true">
-        ☀
+        <Sun />
       </span>
-      <span className="theme-toggle__knob" aria-hidden="true" />
+      <span className="theme-toggle__knob" aria-hidden="true">
+        {light ? <Sun /> : <Moon />}
+      </span>
     </button>
   );
 }

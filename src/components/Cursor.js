@@ -38,9 +38,13 @@ export default function Cursor() {
     let state = '';
     let raf;
 
-    const setState = (next, text) => {
+    const setState = (next, text, arrow = false) => {
       state = next || '';
-      if (blob.current) blob.current.dataset.state = state;
+      if (blob.current) {
+        blob.current.dataset.state = state;
+        blob.current.classList.toggle('has-arrow', arrow);
+      }
+      root.classList.toggle('cursor-view', state === 'view');
       if (label.current) label.current.textContent = text || '';
     };
     const onMove = (e) => {
@@ -48,13 +52,29 @@ export default function Cursor() {
       pos.y = e.clientY;
       if (dot.current) dot.current.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
     };
-    const onOver = (e) => {
-      const target = e.target.closest && e.target.closest('[data-cursor]');
-      if (target) setState(target.dataset.cursor || 'hover', target.dataset.cursorLabel);
+    // Page elements and 3D keys report hover separately, so a key's late
+    // "pointer out" can't wipe the state of a link the pointer is now over.
+    let domHover = null;
+    let sceneHover = null;
+    const apply = () => {
+      const h = sceneHover || domHover;
+      if (h) setState(h.state, h.label, h.arrow);
       else setState('');
     };
+    const onOver = (e) => {
+      const target = e.target.closest && e.target.closest('[data-cursor]');
+      domHover = target
+        ? { state: target.dataset.cursor || 'hover', label: target.dataset.cursorLabel, arrow: 'cursorArrow' in target.dataset }
+        : null;
+      apply();
+    };
     // 3D scene objects report hover through a custom event
-    const onScene = (e) => setState(e.detail ? e.detail.state : '', e.detail ? e.detail.label : '');
+    const onScene = (e) => {
+      sceneHover = e.detail ? { state: e.detail.state, label: e.detail.label, arrow: false } : null;
+      apply();
+    };
+    const onDown = () => blob.current && blob.current.classList.add('is-down');
+    const onUp = () => blob.current && blob.current.classList.remove('is-down');
     const onLeave = () => root.classList.add('cursor-away');
     const onEnter = () => root.classList.remove('cursor-away');
 
@@ -81,8 +101,12 @@ export default function Cursor() {
     document.documentElement.addEventListener('mouseleave', onLeave);
     document.documentElement.addEventListener('mouseenter', onEnter);
     window.addEventListener('scene-cursor', onScene);
+    window.addEventListener('mousedown', onDown);
+    window.addEventListener('mouseup', onUp);
     return () => {
-      root.classList.remove('has-cursor', 'cursor-away');
+      root.classList.remove('has-cursor', 'cursor-away', 'cursor-view');
+      window.removeEventListener('mousedown', onDown);
+      window.removeEventListener('mouseup', onUp);
       delete root.dataset.cursorStyle;
       window.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseover', onOver);
