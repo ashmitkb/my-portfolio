@@ -1,5 +1,6 @@
 import learnImg from './assets/1learntls.png';
 import bcaImg from './assets/bca-directory.jpg';
+import yukiImg from './assets/yuki.jpg';
 import meImg from './assets/me.jpg';
 
 // All copy lives here — edit this file to make the site yours.
@@ -88,8 +89,8 @@ export const projects = [
       'Pan-Asian cocktail bar site, refined over several versions with heavy mobile polish',
     ],
     tags: ['HTML', 'CSS', 'JavaScript'],
-    href: 'https://github.com/ashmitkb/yuki',
-    poster: { word: '雪', sub: 'Yuki · omakase & cocktail bar', serif: true },
+    image: yukiImg,
+    href: 'https://ashmitkb.github.io/yuki/',
     colors: ['#ff9d8a', '#5a1a2a', '#0d0608'],
   },
   {
