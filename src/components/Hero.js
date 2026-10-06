@@ -1,4 +1,5 @@
 import { profile } from '../data';
+import KeyButtons from './KeyButtons';
 
 const letters = 'ASHMIT'.split('');
 
@@ -24,8 +25,9 @@ export default function Hero({ ready }) {
           <a href="#work" className="btn-glass" data-cursor="hover">
             Explore my work <span aria-hidden="true">↓</span>
           </a>
-          <span className="hero__hint mono">Psst — the keyboard is real. Press the keys.</span>
+          <span className="hero__hint mono">Click the keys — or type U I U X.</span>
         </div>
+        <KeyButtons />
       </div>
     </section>
   );

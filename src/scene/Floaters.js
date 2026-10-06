@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { scrollState } from './scrollState';
 
@@ -14,6 +14,14 @@ const shapes = ['icosa', 'torus', 'sphere', 'octa', 'knot'];
 
 export default function Floaters({ count = 12, still = false }) {
   const refs = useRef([]);
+  const spin = useRef({ boost: 0, angle: 0 });
+
+  // heart / UIUX easter eggs make the glass shapes whirl for a moment
+  useEffect(() => {
+    const on = () => (spin.current.boost = 1);
+    window.addEventListener('scene-burst', on);
+    return () => window.removeEventListener('scene-burst', on);
+  }, []);
   const items = useMemo(() => {
     const r = rng(42);
     return Array.from({ length: count }, (_, i) => ({
@@ -28,14 +36,18 @@ export default function Floaters({ count = 12, still = false }) {
     }));
   }, [count]);
 
-  useFrame((state) => {
+  useFrame((state, dt) => {
     const t = still ? 0 : state.clock.elapsedTime;
+    const sp = spin.current;
+    sp.boost = Math.max(0, sp.boost - dt * 0.7);
+    sp.angle += dt * sp.boost * 9;
     items.forEach((it, i) => {
       const m = refs.current[i];
       if (!m) return;
       const y = (((it.y + scrollState.y * it.speed) % RANGE) + RANGE) % RANGE;
       m.position.set(it.x + Math.sin(t * 0.3 + i) * 0.3, y - RANGE / 2, it.z);
-      m.rotation.set(t * it.spin + i, t * it.spin * 0.8, 0);
+      m.rotation.set(t * it.spin + i + sp.angle, t * it.spin * 0.8 + sp.angle * 0.6, 0);
+      m.scale.setScalar(it.s * (1 + sp.boost * 0.35));
     });
   });
 

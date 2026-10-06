@@ -12,7 +12,7 @@ import { prefersReducedMotion } from '../hooks';
 // `m` overrides the pose on narrow screens, where it hides behind the glass
 // panels instead of competing with the copy.
 const POSES = [
-  { id: null, x: 1.15, y: -0.45, z: 0, tilt: 0.9, yaw: -0.5, s: 0.8, m: { x: 0.3, y: 0.2, z: -0.6, s: 1 } },
+  { id: null, x: 1.5, y: 0.02, z: 0, tilt: 0.82, yaw: -0.62, s: 0.66, m: { x: 0.1, y: 0.15, z: -0.6, s: 0.95 } },
   { id: 'work', x: 3.6, y: 0.4, z: -2.6, tilt: 0.7, yaw: -0.95, s: 0.72, m: { x: 0.5, y: -0.6, z: -5, s: 0.85 } },
   { id: 'about', x: 3.6, y: 3.1, z: -4.5, tilt: 0.6, yaw: 0.9, s: 0.5, m: { x: -0.2, y: 1, z: -5, s: 0.75 } },
   { id: 'services', x: 3.9, y: -0.3, z: -3, tilt: 1.1, yaw: -0.3, s: 0.7, m: { x: 0.6, y: -0.6, z: -5, s: 0.85 } },
@@ -102,7 +102,8 @@ export default function Scene() {
         <Lightformer form="rect" intensity={5} position={[0, 6, -4]} scale={[14, 5, 1]} color="#ffffff" />
         <Lightformer form="rect" intensity={4} position={[-7, 1, 3]} rotation-y={Math.PI / 2} scale={[8, 4, 1]} color="#ff9d8a" />
         <Lightformer form="rect" intensity={4} position={[7, 1, 3]} rotation-y={-Math.PI / 2} scale={[8, 4, 1]} color="#7fb8ff" />
-        <Lightformer form="ring" intensity={3} position={[0, 0, 7]} scale={6} color="#c9b8ff" />
+        <Lightformer form="rect" intensity={2.5} position={[0, 1.5, 8]} scale={[16, 4, 1]} color="#ffffff" />
+        <Lightformer form="rect" intensity={1.5} position={[0, -2, 7]} scale={[16, 2, 1]} color="#c9b8ff" />
         <Lightformer form="rect" intensity={2} position={[0, -5, 2]} rotation-x={Math.PI / 2} scale={[12, 6, 1]} color="#ffffff" />
       </Environment>
       <Rig reduced={reduced} mobile={mobile} />

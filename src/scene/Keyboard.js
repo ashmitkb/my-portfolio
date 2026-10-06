@@ -1,139 +1,280 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { RoundedBox } from '@react-three/drei';
-import { MathUtils } from 'three';
-import { keys } from './keys';
+import {
+  ExtrudeGeometry,
+  MathUtils,
+  MeshPhysicalMaterial,
+  MeshStandardMaterial,
+  Shape,
+} from 'three';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { COLS, ROWS, keys } from './keys';
 import { legendTexture } from './legend';
-import { scrollState } from './scrollState';
+import { runAction, typeLetter } from './actions';
 
-const U = 1.12; // key pitch
-const H = 0.55; // keycap height
-const ROW_Z = [-1.2, 0, 1.2];
+const U = 1; // key pitch
+const GAP = 0.08; // space between caps
+const H = 0.62; // keycap height
+const INSET = 0.1; // how much narrower the top of a cap is than its base
+const BORDER = 0.34; // case border around the key grid
+export const MODEL_SCALE = 1.45;
 
 const setCursor = (detail) =>
   window.dispatchEvent(new CustomEvent('scene-cursor', { detail }));
 
-function Key({ k, x, z }) {
-  const mesh = useRef();
-  const s = useRef({ hover: false, down: false, kbd: false, glow: 0 });
-  const width = k.w * U - 0.12;
+// Pointer events reach the scene through the page; ignore the ones that land
+// on real UI drawn above the canvas so a click never does two things.
+const blocked = (e) => {
+  const t = e.nativeEvent && e.nativeEvent.target;
+  return !!(
+    t &&
+    t.closest &&
+    t.closest('a, button, input, textarea, .glass, .glass-chip, .btn-glass, .nav, .menu')
+  );
+};
 
-  // physical keyboard presses animate the matching letter key
-  useEffect(() => {
-    if (k.label.length !== 1 || k.heart) return undefined;
-    const match = (e) => e.key && e.key.toUpperCase() === k.label;
-    const dn = (e) => match(e) && (s.current.kbd = true);
-    const up = (e) => match(e) && (s.current.kbd = false);
-    window.addEventListener('keydown', dn);
-    window.addEventListener('keyup', up);
-    return () => {
-      window.removeEventListener('keydown', dn);
-      window.removeEventListener('keyup', up);
-    };
-  }, [k]);
+/** Rounded box whose sides taper inward toward the top, like a sculpted keycap. */
+const geoCache = new Map();
+function keycapGeometry(w, d) {
+  const id = `${w}x${d}`;
+  if (geoCache.has(id)) return geoCache.get(id);
+  const g = new RoundedBoxGeometry(w, H, d, 6, 0.15);
+  const p = g.attributes.position;
+  for (let i = 0; i < p.count; i += 1) {
+    const t = (p.getY(i) + H / 2) / H;
+    p.setX(i, p.getX(i) * (1 - (INSET * t) / (w / 2)));
+    p.setZ(i, p.getZ(i) * (1 - (INSET * t) / (d / 2)));
+  }
+  geoCache.set(id, g);
+  return g;
+}
 
-  useFrame((_, dt) => {
-    const st = s.current;
-    const pressed = st.down || st.kbd;
-    const target = pressed ? -0.24 : st.hover ? -0.1 : 0;
-    if (mesh.current) {
-      mesh.current.position.y = MathUtils.damp(mesh.current.position.y, target, 18, dt);
+function roundedRectShape(w, h, r, shape = new Shape()) {
+  const x = -w / 2;
+  const y = -h / 2;
+  shape.moveTo(x + r, y);
+  shape.lineTo(x + w - r, y);
+  shape.quadraticCurveTo(x + w, y, x + w, y + r);
+  shape.lineTo(x + w, y + h - r);
+  shape.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  shape.lineTo(x + r, y + h);
+  shape.quadraticCurveTo(x, y + h, x, y + h - r);
+  shape.lineTo(x, y + r);
+  shape.quadraticCurveTo(x, y, x + r, y);
+  return shape;
+}
+
+/** Emissive light that is strongest at the base of the cap and fades out by the top. */
+function withUnderglow(mat) {
+  mat.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying float vKeyY;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvKeyY = position.y;');
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', '#include <common>\nvarying float vKeyY;')
+      .replace(
+        '#include <emissivemap_fragment>',
+        `#include <emissivemap_fragment>
+        totalEmissiveRadiance *= 1.0 - smoothstep(${(-H / 2).toFixed(3)}, ${(H * 0.42).toFixed(3)}, vKeyY);`
+      );
+  };
+  mat.customProgramCacheKey = () => 'keycap-underglow';
+  return mat;
+}
+
+const STYLES = {
+  white: {
+    color: '#f4f0f3', transmission: 0.45, thickness: 1.2, roughness: 0.38, ior: 1.4,
+    attenuationColor: '#ffe4d8', attenuationDistance: 1.4, clearcoat: 0.4, clearcoatRoughness: 0.3,
+    sheen: 0.6, sheenColor: '#ffffff', emissive: '#ff9a72', glow: 0.35,
+  },
+  purple: {
+    color: '#7a5cff', transmission: 0.2, thickness: 1, roughness: 0.22, clearcoat: 1,
+    attenuationColor: '#5b3dff', attenuationDistance: 1, emissive: '#8a6cff', glow: 0.45,
+  },
+  yellow: {
+    color: '#ffb51c', roughness: 0.26, clearcoat: 1, clearcoatRoughness: 0.1,
+    emissive: '#ff8a00', glow: 0.35,
+  },
+  blue: {
+    color: '#5a48ff', transmission: 0.35, thickness: 2, roughness: 0.18, clearcoat: 1,
+    attenuationColor: '#3424ff', attenuationDistance: 0.9, emissive: '#6f63ff', glow: 0.7,
+  },
+  heart: {
+    color: '#140606', transmission: 0.25, thickness: 1, roughness: 0.12, clearcoat: 1,
+    attenuationColor: '#ff2a0a', attenuationDistance: 0.6, emissive: '#ff2a0a', glow: 2.6,
+  },
+};
+
+function makeMaterial(style) {
+  if (style === 'chrome') {
+    const chrome = new MeshStandardMaterial({
+      color: '#e4e8ee', metalness: 1, roughness: 0.1, envMapIntensity: 1.7,
+    });
+    const top = new MeshPhysicalMaterial({
+      color: '#0a0e1f', metalness: 0.4, roughness: 0.15, clearcoat: 1, clearcoatRoughness: 0.04,
+      iridescence: 1, iridescenceIOR: 1.6, iridescenceThicknessRange: [200, 700], envMapIntensity: 1.7,
+    });
+    // BoxGeometry face order: +x, -x, +y (top), -y, +z, -z
+    return { material: [chrome, chrome, top, chrome, chrome, chrome], glow: 0, emissive: null };
+  }
+  const { glow, ...params } = STYLES[style];
+  const m = withUnderglow(
+    new MeshPhysicalMaterial({ envMapIntensity: 1.6, ior: 1.45, ...params, emissiveIntensity: glow })
+  );
+  return { material: m, glow, emissive: m };
+}
+
+function Key({ k, state }) {
+  const cap = useRef();
+  const { material, glow, emissive } = useMemo(() => makeMaterial(k.style), [k.style]);
+  const geometry = keycapGeometry(k.w * U - GAP, k.d * U - GAP);
+  const legend = useMemo(() => legendTexture(k.legend, k.w, k.d), [k]);
+  const topW = k.w * U - GAP - INSET * 2 - 0.06;
+  const topD = k.d * U - GAP - INSET * 2 - 0.06;
+  const x = (k.col + k.w / 2) * U - (COLS * U) / 2;
+  const z = (ROWS * U) / 2 - (k.row + k.d / 2) * U; // row 0 is the front
+
+  useFrame((frame, dt) => {
+    const s = state.current;
+    const pressed = s.down || s.kbd;
+    const target = pressed ? -0.2 : s.hover ? -0.06 : 0;
+    if (cap.current) cap.current.position.y = MathUtils.damp(cap.current.position.y, target, 22, dt);
+    s.flash = Math.max(0, s.flash - dt * 2.2);
+    if (emissive) {
+      const beat = k.style === 'heart' ? Math.pow(Math.max(0, Math.sin(frame.clock.elapsedTime * 3.2)), 12) * 0.5 : 0;
+      emissive.emissiveIntensity = glow * (1 + beat + s.flash * 1.6 + (s.hover ? 0.35 : 0));
     }
   });
 
-  // only the hero keyboard is interactive; later it's a backdrop
-  const live = () => scrollState.y < window.innerHeight * 0.6;
+  const handlers = {
+    onPointerOver: (e) => {
+      if (blocked(e)) return;
+      e.stopPropagation();
+      state.current.hover = true;
+      setCursor({ state: 'view', label: k.cursor });
+    },
+    onPointerMove: (e) => {
+      if (blocked(e) && state.current.hover) {
+        state.current.hover = false;
+        setCursor(null);
+      }
+    },
+    onPointerOut: () => {
+      state.current.hover = false;
+      state.current.down = false;
+      setCursor(null);
+    },
+    onPointerDown: (e) => {
+      if (blocked(e)) return;
+      e.stopPropagation();
+      state.current.down = true;
+      state.current.flash = 1;
+    },
+    onPointerUp: () => {
+      state.current.down = false;
+    },
+    onClick: (e) => {
+      if (blocked(e)) return;
+      e.stopPropagation();
+      runAction(k);
+    },
+  };
 
   return (
     <group position={[x, 0, z]}>
-      <group ref={mesh}>
-        <RoundedBox
-          args={[width, H, 1.0]}
-          radius={0.16}
-          smoothness={5}
-          position={[0, H / 2, 0]}
-          onPointerOver={(e) => {
-            if (!live()) return;
-            e.stopPropagation();
-            s.current.hover = true;
-            setCursor({ state: 'view', label: k.go ? 'Go' : 'Press' });
-          }}
-          onPointerOut={() => {
-            s.current.hover = false;
-            s.current.down = false;
-            setCursor(null);
-          }}
-          onPointerDown={(e) => {
-            if (!live()) return;
-            e.stopPropagation();
-            s.current.down = true;
-          }}
-          onPointerUp={() => (s.current.down = false)}
-          onClick={(e) => {
-            if (!live()) return;
-            e.stopPropagation();
-            if (k.go) document.querySelector(k.go)?.scrollIntoView({ behavior: 'smooth' });
-          }}
-        >
-          <meshPhysicalMaterial
-            color={k.tint}
-            transmission={k.solid ? 0.35 : 0.9}
-            thickness={2}
-            ior={1.45}
-            roughness={k.solid ? 0.28 : 0.2}
-            dispersion={4}
-            attenuationColor={k.tint}
-            attenuationDistance={0.7}
-            clearcoat={1}
-            clearcoatRoughness={0.04}
-            sheen={0.6}
-            sheenColor="#ffffff"
-            envMapIntensity={1.8}
-            emissive={k.tint}
-            emissiveIntensity={k.solid ? 0.25 : 0.12}
-          />
-        </RoundedBox>
-        <mesh position={[0, H + 0.004, 0]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={5}>
-          <planeGeometry args={[Math.min(width * 0.86, 1.9), Math.min(width * 0.86, 1.9) / 2]} />
-          <meshBasicMaterial
-            map={legendTexture(k.label, { color: k.ink })}
-            transparent
-            toneMapped={false}
-            depthWrite={false}
-            opacity={0.95}
-          />
+      <group ref={cap}>
+        <mesh geometry={geometry} material={material} position={[0, H / 2, 0]} {...handlers} />
+        <mesh position={[0, H + 0.002, 0]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={5}>
+          <planeGeometry args={[topW, topD]} />
+          <meshBasicMaterial map={legend} transparent toneMapped={false} depthWrite={false} />
         </mesh>
       </group>
     </group>
   );
 }
 
-export default function Keyboard() {
-  const rows = [0, 1, 2].map((r) => {
-    const row = keys.filter((k) => k.row === r);
-    const total = row.reduce((a, k) => a + k.w, 0);
-    let cursor = -total / 2;
-    return row.map((k) => {
-      const x = (cursor + k.w / 2) * U;
-      cursor += k.w;
-      return { k, x, z: ROW_Z[r] };
-    });
-  });
+function Case() {
+  const W = COLS * U + BORDER * 2;
+  const D = ROWS * U + BORDER * 2;
+  const { base, rim, plate } = useMemo(() => {
+    const frame = roundedRectShape(W - 0.1, D - 0.1, 0.32);
+    frame.holes.push(roundedRectShape(COLS * U + 0.12, ROWS * U + 0.12, 0.14));
+    return {
+      base: new RoundedBoxGeometry(W, 0.5, D, 6, 0.3),
+      rim: new ExtrudeGeometry(frame, {
+        depth: 0.16,
+        bevelEnabled: true,
+        bevelThickness: 0.05,
+        bevelSize: 0.05,
+        bevelSegments: 5,
+        curveSegments: 20,
+      }),
+      plate: new RoundedBoxGeometry(COLS * U + 0.14, 0.06, ROWS * U + 0.14, 2, 0.03),
+    };
+  }, [W, D]);
 
   return (
     <group>
-      {/* chassis */}
-      <RoundedBox args={[7.5, 0.8, 4.4]} radius={0.3} smoothness={5} position={[0, -0.5, 0]}>
-        <meshStandardMaterial color="#0c0b13" metalness={0.9} roughness={0.28} envMapIntensity={1.2} />
-      </RoundedBox>
-      <RoundedBox args={[7.1, 0.12, 4.0]} radius={0.2} smoothness={4} position={[0, -0.08, 0]}>
-        <meshStandardMaterial color="#191726" metalness={0.7} roughness={0.4} />
-      </RoundedBox>
-      {/* under-glow that tints the glass */}
-      <pointLight position={[-2.4, 0.5, 0.4]} color="#ff8a73" intensity={9} distance={7} />
-      <pointLight position={[2.4, 0.5, -0.4]} color="#6aa8ff" intensity={9} distance={7} />
-      {rows.flat().map(({ k, x, z }) => (
-        <Key key={k.label + x} k={k} x={x} z={z} />
+      <mesh geometry={base} position={[0, -0.25, 0]}>
+        <meshStandardMaterial color="#353a3f" metalness={0.45} roughness={0.42} envMapIntensity={1.3} />
+      </mesh>
+      <mesh geometry={rim} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]}>
+        <meshStandardMaterial color="#454b51" metalness={0.5} roughness={0.32} envMapIntensity={1.4} />
+      </mesh>
+      <mesh geometry={plate} position={[0, 0, 0]}>
+        <meshStandardMaterial color="#121417" roughness={0.75} />
+      </mesh>
+    </group>
+  );
+}
+
+export default function Keyboard() {
+  // one mutable state object per key, shared by pointer + physical keyboard input
+  const states = useRef(
+    Object.fromEntries(keys.map((k) => [k.id, { current: { hover: false, down: false, kbd: false, flash: 0 } }]))
+  );
+
+  // typing U, I or X on a real keyboard presses the matching caps
+  useEffect(() => {
+    const match = (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return [];
+      const tag = e.target && e.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return [];
+      const letter = (e.key || '').toUpperCase();
+      return keys.filter((k) => k.letter === letter);
+    };
+    const down = (e) => {
+      const hit = match(e);
+      if (!hit.length || e.repeat) return;
+      hit.forEach((k) => {
+        const s = states.current[k.id].current;
+        s.kbd = true;
+        s.flash = 1;
+      });
+      typeLetter(hit[0].letter);
+    };
+    const up = (e) => match(e).forEach((k) => (states.current[k.id].current.kbd = false));
+    window.addEventListener('keydown', down);
+    window.addEventListener('keyup', up);
+    return () => {
+      window.removeEventListener('keydown', down);
+      window.removeEventListener('keyup', up);
+    };
+  }, []);
+
+  const heart = keys.find((k) => k.id === 'heart');
+  const hire = keys.find((k) => k.id === 'hire');
+  const pos = (k) => [(k.col + k.w / 2) * U - (COLS * U) / 2, (ROWS * U) / 2 - (k.row + k.d / 2) * U];
+
+  return (
+    <group scale={MODEL_SCALE}>
+      <Case />
+      {/* light spilling out from under the glowing caps onto their neighbours */}
+      <pointLight position={[pos(heart)[0], 0.3, pos(heart)[1]]} color="#ff3a1a" intensity={5} distance={2.8} decay={2} />
+      <pointLight position={[pos(hire)[0], 0.3, pos(hire)[1]]} color="#6b5cff" intensity={3} distance={2.6} decay={2} />
+      {keys.map((k) => (
+        <Key key={k.id} k={k} state={states.current[k.id]} />
       ))}
     </group>
   );

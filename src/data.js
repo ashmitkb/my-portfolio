@@ -13,6 +13,9 @@ export const profile = {
   location: 'Bangalore, India',
   timeZone: 'Asia/Kolkata',
   photo: meImg,
+  // Set these to URLs to make the Résumé and Figma keys open them directly.
+  resume: null,
+  figma: null,
   intro:
     'I build bold, fast interfaces where motion, 3D and engineering meet.',
 };

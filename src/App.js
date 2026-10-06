@@ -12,6 +12,7 @@ import Services from './components/Services';
 import Contact from './components/Contact';
 import SceneLayer from './components/SceneLayer';
 import Lens from './components/Lens';
+import Toast from './components/Toast';
 
 function App() {
   const root = useRef(null);
@@ -38,6 +39,7 @@ function App() {
         <Services />
       </main>
       <Contact />
+      <Toast />
     </div>
   );
 }

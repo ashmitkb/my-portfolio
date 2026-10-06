@@ -180,6 +180,55 @@ em {
   opacity: 1;
 }
 
+/* ───────── Toast ───────── */
+.toast-wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 28px;
+  z-index: 650;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  padding: 0 16px;
+}
+.toast {
+  padding: 14px 22px;
+  font-size: 0.95rem;
+  text-align: center;
+  white-space: pre;
+  animation: toast-in 0.6s var(--ease) both;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+}
+
+/* Accessible twins of the 3D keys: hidden until focused */
+.key-buttons {
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px;
+  margin-bottom: 12px;
+  clip-path: inset(50%);
+  opacity: 0;
+}
+.key-buttons:focus-within {
+  clip-path: none;
+  opacity: 1;
+}
+.key-buttons button {
+  padding: 8px 12px;
+  border-radius: 99px;
+}
+.key-buttons button:hover,
+.key-buttons button:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+}
+
 /* ───────── Scene layer ───────── */
 .scene-layer {
   position: fixed;
