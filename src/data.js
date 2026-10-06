@@ -1,4 +1,5 @@
 import learnImg from './assets/1learntls.png';
+import bcaImg from './assets/bca-directory.jpg';
 import meImg from './assets/me.jpg';
 
 // All copy lives here — edit this file to make the site yours.
@@ -117,7 +118,8 @@ export const projects = [
       'Slide-out profile drawer, scroll progress, navy-and-gold glass UI',
     ],
     tags: ['React', 'Vite'],
-    poster: { word: 'BCA ’27', sub: 'CHRIST · YPR campus' },
+    image: bcaImg,
+    href: 'https://bca-4th-year-brochure.vercel.app/',
     colors: ['#e8c26b', '#1b2a55', '#070b18'],
   },
   {
