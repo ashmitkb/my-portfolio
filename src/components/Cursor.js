@@ -36,7 +36,11 @@ export default function Cursor() {
     const pos = { x: -100, y: -100 };
     const lag = { x: -100, y: -100 };
     let state = '';
-    let raf;
+    let raf = 0;
+    // the trailing loop runs only while the shape is still catching up
+    const wake = () => {
+      if (!raf) raf = requestAnimationFrame(loop);
+    };
 
     const setState = (next, text, arrow = false) => {
       state = next || '';
@@ -51,6 +55,7 @@ export default function Cursor() {
       pos.x = e.clientX;
       pos.y = e.clientY;
       if (dot.current) dot.current.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+      wake();
     };
     // Page elements and 3D keys report hover separately, so a key's late
     // "pointer out" can't wipe the state of a link the pointer is now over.
@@ -78,10 +83,11 @@ export default function Cursor() {
     const onLeave = () => root.classList.add('cursor-away');
     const onEnter = () => root.classList.remove('cursor-away');
 
-    const loop = () => {
+    function loop() {
       const dx = pos.x - lag.x;
       const dy = pos.y - lag.y;
-      const ease = style === 'invert' ? 0.24 : 0.18;
+      const settled = Math.abs(dx) < 0.1 && Math.abs(dy) < 0.1;
+      const ease = settled ? 1 : style === 'invert' ? 0.24 : 0.18;
       lag.x += dx * ease;
       lag.y += dy * ease;
       if (blob.current) blob.current.style.transform = `translate3d(${lag.x}px, ${lag.y}px, 0)`;
@@ -90,11 +96,12 @@ export default function Cursor() {
         const speed = Math.hypot(dx, dy);
         const stretch = Math.min(speed / 150, 0.5) * (state ? 0.25 : 1);
         const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
-        shape.current.style.transform = `rotate(${angle.toFixed(1)}deg) scale(${(1 + stretch).toFixed(3)}, ${(1 - stretch * 0.55).toFixed(3)})`;
+        shape.current.style.transform = settled
+          ? 'none'
+          : `rotate(${angle.toFixed(1)}deg) scale(${(1 + stretch).toFixed(3)}, ${(1 - stretch * 0.55).toFixed(3)})`;
       }
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
+      raf = settled ? 0 : requestAnimationFrame(loop);
+    }
 
     window.addEventListener('mousemove', onMove, { passive: true });
     document.addEventListener('mouseover', onOver, { passive: true });

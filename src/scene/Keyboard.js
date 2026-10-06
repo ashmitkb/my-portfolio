@@ -35,10 +35,10 @@ const blocked = (e) => {
 
 /** Rounded box whose sides taper inward toward the top, like a sculpted keycap. */
 const geoCache = new Map();
-function keycapGeometry(w, d) {
-  const id = `${w}x${d}`;
+function keycapGeometry(w, d, segs = 6) {
+  const id = `${w}x${d}x${segs}`;
   if (geoCache.has(id)) return geoCache.get(id);
-  const g = new RoundedBoxGeometry(w, H, d, 6, 0.15);
+  const g = new RoundedBoxGeometry(w, H, d, segs, 0.15);
   const p = g.attributes.position;
   for (let i = 0; i < p.count; i += 1) {
     const t = (p.getY(i) + H / 2) / H;
@@ -106,29 +106,51 @@ const STYLES = {
   },
 };
 
-function makeMaterial(style) {
+// Lower tiers keep every colour but drop the costliest shading: refraction
+// (transmission adds a whole extra render pass), dispersion, iridescence, sheen.
+function cheaper(params, q) {
+  const p = { ...params };
+  if (!q.fancy) {
+    delete p.dispersion;
+    delete p.sheen;
+    delete p.sheenColor;
+  }
+  if (!q.transmission) {
+    delete p.transmission;
+    delete p.thickness;
+    delete p.attenuationColor;
+    delete p.attenuationDistance;
+    delete p.clearcoatRoughness;
+    p.clearcoat = Math.min(p.clearcoat || 0, 0.6);
+    p.roughness = Math.max(p.roughness || 0, 0.22);
+  }
+  return p;
+}
+
+function makeMaterial(style, q) {
   if (style === 'chrome') {
     const chrome = new MeshStandardMaterial({
       color: '#e4e8ee', metalness: 1, roughness: 0.1, envMapIntensity: 1.7,
     });
     const top = new MeshPhysicalMaterial({
       color: '#0a0e1f', metalness: 0.4, roughness: 0.15, clearcoat: 1, clearcoatRoughness: 0.04,
-      iridescence: 1, iridescenceIOR: 1.6, iridescenceThicknessRange: [200, 700], envMapIntensity: 1.7,
+      envMapIntensity: 1.7,
+      ...(q.fancy ? { iridescence: 1, iridescenceIOR: 1.6, iridescenceThicknessRange: [200, 700] } : {}),
     });
     // BoxGeometry face order: +x, -x, +y (top), -y, +z, -z
     return { material: [chrome, chrome, top, chrome, chrome, chrome], glow: 0, emissive: null };
   }
   const { glow, ...params } = STYLES[style];
   const m = withUnderglow(
-    new MeshPhysicalMaterial({ envMapIntensity: 1.6, ior: 1.45, ...params, emissiveIntensity: glow })
+    new MeshPhysicalMaterial({ envMapIntensity: 1.6, ior: 1.45, ...cheaper(params, q), emissiveIntensity: glow })
   );
   return { material: m, glow, emissive: m };
 }
 
-function Key({ k, state }) {
+function Key({ k, state, q }) {
   const cap = useRef();
-  const { material, glow, emissive } = useMemo(() => makeMaterial(k.style), [k.style]);
-  const geometry = keycapGeometry(k.w * U - GAP, k.d * U - GAP);
+  const { material, glow, emissive } = useMemo(() => makeMaterial(k.style, q), [k.style, q]);
+  const geometry = keycapGeometry(k.w * U - GAP, k.d * U - GAP, q.segs);
   const legend = useMemo(() => legendTexture(k.legend, k.w, k.d), [k]);
   const topW = k.w * U - GAP - INSET * 2 - 0.06;
   const topD = k.d * U - GAP - INSET * 2 - 0.06;
@@ -194,25 +216,25 @@ function Key({ k, state }) {
   );
 }
 
-function Case() {
+function Case({ q }) {
   const W = COLS * U + BORDER * 2;
   const D = ROWS * U + BORDER * 2;
   const { base, rim, plate } = useMemo(() => {
     const frame = roundedRectShape(W - 0.1, D - 0.1, 0.32);
     frame.holes.push(roundedRectShape(COLS * U + 0.12, ROWS * U + 0.12, 0.14));
     return {
-      base: new RoundedBoxGeometry(W, 0.5, D, 6, 0.3),
+      base: new RoundedBoxGeometry(W, 0.5, D, q.segs, 0.3),
       rim: new ExtrudeGeometry(frame, {
         depth: 0.16,
         bevelEnabled: true,
         bevelThickness: 0.05,
         bevelSize: 0.05,
-        bevelSegments: 5,
-        curveSegments: 20,
+        bevelSegments: q.segs > 4 ? 5 : 3,
+        curveSegments: q.segs > 4 ? 20 : 10,
       }),
       plate: new RoundedBoxGeometry(COLS * U + 0.14, 0.06, ROWS * U + 0.14, 2, 0.03),
     };
-  }, [W, D]);
+  }, [W, D, q.segs]);
 
   return (
     <group>
@@ -229,7 +251,7 @@ function Case() {
   );
 }
 
-export default function Keyboard() {
+export default function Keyboard({ q }) {
   // one mutable state object per key, shared by pointer + physical keyboard input
   const states = useRef(
     Object.fromEntries(keys.map((k) => [k.id, { current: { hover: false, down: false, kbd: false, flash: 0 } }]))
@@ -269,12 +291,12 @@ export default function Keyboard() {
 
   return (
     <group scale={MODEL_SCALE}>
-      <Case />
+      <Case q={q} />
       {/* light spilling out from under the glowing caps onto their neighbours */}
       <pointLight position={[pos(heart)[0], 0.3, pos(heart)[1]]} color="#ff3a1a" intensity={5} distance={2.8} decay={2} />
       <pointLight position={[pos(hire)[0], 0.3, pos(hire)[1]]} color="#6b5cff" intensity={3} distance={2.6} decay={2} />
       {keys.map((k) => (
-        <Key key={k.id} k={k} state={states.current[k.id]} />
+        <Key key={k.id} k={k} state={states.current[k.id]} q={q} />
       ))}
     </group>
   );

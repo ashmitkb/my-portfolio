@@ -12,7 +12,10 @@ const rng = (seed) => () => {
 
 const shapes = ['icosa', 'torus', 'sphere', 'octa', 'knot'];
 
-export default function Floaters({ count = 12, still = false, mobile = false }) {
+const DETAIL = { high: [48, 96, 16, 48], medium: [24, 64, 12, 32], low: [16, 48, 8, 24] };
+
+export default function Floaters({ count = 12, still = false, mobile = false, q }) {
+  const [sphereSeg, knotSeg, knotRad, torusSeg] = DETAIL[q.fancy ? 'high' : q.transmission ? 'medium' : 'low'];
   const refs = useRef([]);
   const spin = useRef({ boost: 0, angle: 0 });
 
@@ -60,21 +63,26 @@ export default function Floaters({ count = 12, still = false, mobile = false }) 
   return items.map((it, i) => (
     <mesh key={i} ref={(el) => (refs.current[i] = el)} scale={it.s}>
       {it.shape === 'icosa' && <icosahedronGeometry args={[1, 0]} />}
-      {it.shape === 'torus' && <torusGeometry args={[0.8, 0.32, 24, 48]} />}
-      {it.shape === 'sphere' && <sphereGeometry args={[0.9, 48, 48]} />}
+      {it.shape === 'torus' && <torusGeometry args={[0.8, 0.32, torusSeg / 2, torusSeg]} />}
+      {it.shape === 'sphere' && <sphereGeometry args={[0.9, sphereSeg, sphereSeg]} />}
       {it.shape === 'octa' && <octahedronGeometry args={[1, 0]} />}
-      {it.shape === 'knot' && <torusKnotGeometry args={[0.6, 0.22, 96, 16]} />}
-      <meshPhysicalMaterial
-        color={it.tint}
-        transmission={1}
-        thickness={1.2}
-        ior={1.5}
-        roughness={0.06}
-        dispersion={6}
-        attenuationColor={it.tint}
-        attenuationDistance={2}
-        envMapIntensity={1.5}
-      />
+      {it.shape === 'knot' && <torusKnotGeometry args={[0.6, 0.22, knotSeg, knotRad]} />}
+      {q.transmission ? (
+        <meshPhysicalMaterial
+          color={it.tint}
+          transmission={1}
+          thickness={1.2}
+          ior={1.5}
+          roughness={0.06}
+          dispersion={q.fancy ? 6 : 0}
+          attenuationColor={it.tint}
+          attenuationDistance={2}
+          envMapIntensity={1.5}
+        />
+      ) : (
+        // low tier: glossy candy shapes, no refraction pass
+        <meshStandardMaterial color={it.tint} roughness={0.18} metalness={0.05} envMapIntensity={1.4} />
+      )}
     </mesh>
   ));
 }

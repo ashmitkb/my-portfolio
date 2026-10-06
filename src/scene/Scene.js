@@ -1,11 +1,19 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Environment, Lightformer } from '@react-three/drei';
+import { Environment, Lightformer, PerformanceMonitor } from '@react-three/drei';
 import { MathUtils } from 'three';
 import Keyboard from './Keyboard';
 import Floaters from './Floaters';
 import { scrollState } from './scrollState';
 import { prefersReducedMotion } from '../hooks';
+import { applyTier, currentTier, forcedTier, lowerTier, softwareGpu } from '../perf';
+
+// What each quality tier (see src/perf.js) renders.
+const QUALITY = {
+  high: { dpr: 1.8, floaters: 12, transmission: true, fancy: true, segs: 6, loop: 'always' },
+  medium: { dpr: 1.3, floaters: 7, transmission: true, fancy: false, segs: 4, loop: 'paced' },
+  low: { dpr: 1, floaters: 4, transmission: false, fancy: false, segs: 3, loop: 'lazy' },
+};
 
 // Where the keyboard sits as each section scrolls into view.
 // x/y/z are world units (desktop x is scaled to the viewport width);
@@ -52,12 +60,14 @@ function samplePose(y, mobile) {
   return { x: mix('x'), y: mix('y'), z: mix('z'), tilt: mix('tilt'), yaw: mix('yaw'), s: mix('s') };
 }
 
-function Rig({ reduced, mobile }) {
+function Rig({ reduced, mobile, q }) {
   const outer = useRef();
   const inner = useRef();
   const { viewport, camera, pointer } = useThree();
 
-  useFrame((state, dt) => {
+  useFrame((state, delta) => {
+    // on-demand tiers can sleep between frames; don't jump after a long gap
+    const dt = Math.min(delta, 0.1);
     const aspect = state.size.width / state.size.height;
     const fov = aspect < 0.8 ? 54 : 35;
     if (camera.fov !== fov) {
@@ -87,29 +97,108 @@ function Rig({ reduced, mobile }) {
   return (
     <group ref={outer}>
       <group ref={inner}>
-        <Keyboard />
+        <Keyboard q={q} />
       </group>
     </group>
   );
 }
 
+/**
+ * Frame pacing for the lighter tiers (the canvas runs frameloop="demand").
+ * "paced": 60fps while the visitor is active, a gentle 20fps idle drift.
+ * "lazy":  30fps while active, no redraws at all when idle.
+ * Also watches the real frame rate while active and asks for a lower tier
+ * if the device can't keep up.
+ */
+function Pacer({ mode, onSlow }) {
+  const invalidate = useThree((st) => st.invalidate);
+
+  useEffect(() => {
+    let raf;
+    let last = 0;
+    let prev = 0;
+    let wakeUntil = performance.now() + 3000;
+    let slowMs = 0;
+    const wake = () => {
+      wakeUntil = performance.now() + 2000;
+    };
+    const events = ['scroll', 'pointermove', 'pointerdown', 'keydown', 'wheel', 'touchmove', 'resize', 'scene-burst', 'perf-tier'];
+    events.forEach((e) => window.addEventListener(e, wake, { passive: true }));
+
+    const loop = (now) => {
+      raf = requestAnimationFrame(loop);
+      const awake = now < wakeUntil;
+      // a long gap between animation frames while active means the device is struggling
+      // (gaps over a second are a background tab or a breakpoint, not slowness)
+      const gap = now - prev;
+      if (awake && prev && onSlow && gap < 1000) {
+        slowMs = gap > 45 ? slowMs + gap : Math.max(0, slowMs - gap);
+        if (slowMs > 3000) {
+          slowMs = 0;
+          onSlow();
+        }
+      }
+      prev = now;
+      const fps = awake ? (mode === 'lazy' ? 30 : 60) : mode === 'lazy' ? 0 : 20;
+      if (fps && now - last >= 1000 / fps - 4) {
+        last = now;
+        invalidate();
+      }
+    };
+    raf = requestAnimationFrame(loop);
+    return () => {
+      cancelAnimationFrame(raf);
+      events.forEach((e) => window.removeEventListener(e, wake));
+    };
+  }, [mode, onSlow, invalidate]);
+
+  return null;
+}
+
 export default function Scene() {
   const reduced = prefersReducedMotion();
   const mobile = window.innerWidth < 760;
+  const forced = forcedTier();
+  const [tier, setTier] = useState(currentTier);
+  const [armed, setArmed] = useState(false);
+  const q = QUALITY[tier];
+
+  // step down one tier (never back up within a visit) and tell the CSS
+  const stepDown = useRef(() => {
+    setTier((t) => {
+      const next = lowerTier(t);
+      if (next !== t) applyTier(next, { remember: true });
+      return next;
+    });
+  }).current;
+
+  // let shaders compile before judging the frame rate
+  useEffect(() => {
+    const id = setTimeout(() => setArmed(true), 4000);
+    return () => clearTimeout(id);
+  }, []);
 
   return (
     <Canvas
       className="scene"
-      dpr={[1, mobile ? 1.5 : 1.8]}
+      frameloop={q.loop === 'always' ? 'always' : 'demand'}
+      dpr={[1, mobile ? Math.min(1.5, q.dpr) : q.dpr]}
       camera={{ position: [0, 0, 9], fov: window.innerWidth / window.innerHeight < 0.8 ? 54 : 35 }}
-      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+      gl={{ antialias: !(tier === 'low' && softwareGpu()), alpha: true, powerPreference: tier === 'low' ? 'default' : 'high-performance' }}
       eventSource={document.getElementById('root')}
       eventPrefix="client"
     >
+      {/* high tier: drop to medium if it can't hold ~40fps */}
+      {armed && !forced && tier === 'high' && (
+        <PerformanceMonitor bounds={() => [40, 60]} flipflops={2} onDecline={stepDown} />
+      )}
+      {q.loop !== 'always' && (
+        <Pacer mode={q.loop} onSlow={armed && !forced && tier === 'medium' ? stepDown : null} />
+      )}
       <ambientLight intensity={0.35} />
       <directionalLight position={[4, 6, 5]} intensity={1.4} />
       {/* procedural studio lighting — no HDR download */}
-      <Environment resolution={256} frames={1}>
+      <Environment resolution={tier === 'low' ? 128 : 256} frames={1}>
         <Lightformer form="rect" intensity={5} position={[0, 6, -4]} scale={[14, 5, 1]} color="#ffffff" />
         <Lightformer form="rect" intensity={4} position={[-7, 1, 3]} rotation-y={Math.PI / 2} scale={[8, 4, 1]} color="#ff9d8a" />
         <Lightformer form="rect" intensity={4} position={[7, 1, 3]} rotation-y={-Math.PI / 2} scale={[8, 4, 1]} color="#7fb8ff" />
@@ -117,8 +206,8 @@ export default function Scene() {
         <Lightformer form="rect" intensity={1.5} position={[0, -2, 7]} scale={[16, 2, 1]} color="#c9b8ff" />
         <Lightformer form="rect" intensity={2} position={[0, -5, 2]} rotation-x={Math.PI / 2} scale={[12, 6, 1]} color="#ffffff" />
       </Environment>
-      <Rig reduced={reduced} mobile={mobile} />
-      <Floaters count={mobile ? 6 : 12} still={reduced} mobile={mobile} />
+      <Rig reduced={reduced} mobile={mobile} q={q} />
+      <Floaters count={mobile ? Math.min(6, q.floaters) : q.floaters} still={reduced} mobile={mobile} q={q} />
     </Canvas>
   );
 }

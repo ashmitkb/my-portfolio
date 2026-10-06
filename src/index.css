@@ -112,17 +112,25 @@ html {
 
 body {
   margin: 0;
-  background:
-    radial-gradient(900px circle at 85% 8%, var(--blob-a), transparent 60%),
-    radial-gradient(800px circle at 5% 40%, var(--blob-b), transparent 60%),
-    radial-gradient(900px circle at 80% 85%, var(--blob-c), transparent 60%),
-    var(--bg);
-  background-attachment: fixed;
+  background: var(--bg);
   color: var(--fg);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+/* soft colour blobs behind everything. A fixed layer rather than
+   background-attachment: fixed, which makes the browser repaint on every scroll */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(900px circle at 85% 8%, var(--blob-a), transparent 60%),
+    radial-gradient(800px circle at 5% 40%, var(--blob-b), transparent 60%),
+    radial-gradient(900px circle at 80% 85%, var(--blob-c), transparent 60%);
 }
 
 ::selection {

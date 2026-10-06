@@ -1741,3 +1741,57 @@ em {
     transform: none;
   }
 }
+
+/* ───────── Quality tiers ─────────
+   <html data-perf> is set from src/perf.js. Live backdrop blur over a moving
+   WebGL canvas is the most expensive thing on the page, so slower devices get
+   a lighter blur (medium) or none at all with more solid glass (low). */
+:root[data-perf='medium'] .glass,
+:root[data-perf='medium'] .glass-pill,
+:root[data-perf='medium'] .glass-chip,
+:root[data-perf='medium'] .btn-glass,
+:root[data-perf='medium'] .nav__burger,
+:root[data-perf='medium'] .theme-toggle,
+:root[data-perf='medium'] .marquee,
+:root[data-perf='medium'] .portrait__badge {
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
+  backdrop-filter: blur(10px) saturate(1.4);
+}
+:root[data-perf='medium'] .grain {
+  animation: none;
+}
+
+:root[data-perf='low']:not([data-theme='light']) {
+  --glass-fill: linear-gradient(135deg, rgba(56, 52, 70, 0.92), rgba(30, 28, 42, 0.9) 60%);
+  --glass-fill-hover: linear-gradient(135deg, rgba(74, 70, 90, 0.94), rgba(40, 37, 54, 0.92));
+  --glass-tint: rgba(16, 14, 24, 0.9);
+  --marquee-bg: rgba(10, 9, 16, 0.82);
+  --badge-bg: rgba(20, 18, 30, 0.92);
+}
+:root[data-perf='low'][data-theme='light'] {
+  --glass-fill: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.86) 60%);
+  --glass-tint: rgba(255, 255, 255, 0.86);
+  --marquee-bg: rgba(255, 255, 255, 0.86);
+  --badge-bg: rgba(255, 255, 255, 0.92);
+}
+:root[data-perf='low'] .glass,
+:root[data-perf='low'] .glass-pill,
+:root[data-perf='low'] .glass-chip,
+:root[data-perf='low'] .btn-glass,
+:root[data-perf='low'] .nav__burger,
+:root[data-perf='low'] .theme-toggle,
+:root[data-perf='low'] .marquee,
+:root[data-perf='low'] .portrait__badge,
+:root[data-perf='low'][data-cursor-style] .cursor__shape {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+:root[data-perf='low'] .grain {
+  display: none;
+}
+:root[data-perf='low'] .portrait__badge svg {
+  animation: none;
+}
+:root[data-perf='low'] .nav__burger {
+  background: linear-gradient(var(--chip-bg-strong), var(--chip-bg-strong)), var(--glass-tint);
+}

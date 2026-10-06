@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { currentTier } from '../perf';
 
 // SVG displacement refraction only works inside backdrop-filter on Chromium.
 const isChromium = () =>
@@ -8,8 +9,13 @@ const isChromium = () =>
 
 /** Shared SVG refraction filter used by the liquid-glass pills and buttons. */
 export default function GlassFilter() {
+  // refraction re-samples the page behind every pill each frame, so only the
+  // top quality tier gets it; the others keep plain blur
   useEffect(() => {
-    document.documentElement.classList.toggle('can-refract', isChromium());
+    const sync = () => document.documentElement.classList.toggle('can-refract', isChromium() && currentTier() === 'high');
+    sync();
+    window.addEventListener('perf-tier', sync);
+    return () => window.removeEventListener('perf-tier', sync);
   }, []);
 
   return (

@@ -12,7 +12,7 @@ export default function Marquee() {
     let dir = -1;
     let boost = 0;
     let lastY = window.scrollY;
-    let raf;
+    let raf = 0;
     const loop = () => {
       const y = window.scrollY;
       const v = y - lastY;
@@ -29,8 +29,21 @@ export default function Marquee() {
       }
       raf = requestAnimationFrame(loop);
     };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
+    // only animate while the strip is on screen
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !raf) {
+        lastY = window.scrollY;
+        raf = requestAnimationFrame(loop);
+      } else if (!entry.isIntersecting && raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    });
+    if (track.current) io.observe(track.current);
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(raf);
+    };
   }, []);
 
   const row = marqueeWords.map((w, i) => (

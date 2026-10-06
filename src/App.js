@@ -19,6 +19,7 @@ function App() {
 
   return (
     <div className="App">
+      <div className="bg-layer" aria-hidden="true" />
       <Preloader onDone={() => setReady(true)} />
       <Cursor />
       <GlassFilter />
